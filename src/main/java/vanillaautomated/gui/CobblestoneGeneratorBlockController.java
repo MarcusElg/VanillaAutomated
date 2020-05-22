@@ -29,19 +29,16 @@ public class CobblestoneGeneratorBlockController extends CottonCraftingControlle
         label.setAlignment(Alignment.CENTER);
         root.add(label, 0, 0, 160, 10);
 
-        BackgroundPainter bucketSlot = new BackgroundPainter() {
-            @Override
-            public void paintBackground(int i, int i1, WWidget wWidget) {
-                WSprite sprite = new WSprite(VanillaAutomated.bucket_slot);
-            }
-        };
+        WSprite bucketOverlay = new WSprite(VanillaAutomated.bucket_slot);
+        machinePanel.add(bucketOverlay, 3, 0);
+
+        bucketOverlay = new WSprite(VanillaAutomated.bucket_slot);
+        machinePanel.add(bucketOverlay, 5, 0);
 
         WItemSlot waterSlot = WItemSlot.of(blockInventory, 0);
-        waterSlot.setBackgroundPainter(bucketSlot);
         machinePanel.add(waterSlot, 3, 0);
 
         WItemSlot lavaSlot = WItemSlot.of(blockInventory, 1);
-        lavaSlot.setBackgroundPainter(bucketSlot);
         machinePanel.add(lavaSlot, 5, 0);
 
         WBar fire = new WBar(VanillaAutomated.flames_background, VanillaAutomated.flames, 0, 2, WBar.Direction.UP);
