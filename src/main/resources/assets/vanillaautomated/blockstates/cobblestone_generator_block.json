@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "vanillaautomated:block/cobblestone_generator_block" }
+  }
+}

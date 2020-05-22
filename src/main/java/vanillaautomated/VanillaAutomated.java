@@ -13,6 +13,7 @@ public class VanillaAutomated implements ModInitializer {
 	public static Identifier flames_background = new Identifier(prefix, "textures/gui/flames_background.png");
 	public static Identifier progress = new Identifier(prefix, "textures/gui/progress.png");
 	public static Identifier progress_background = new Identifier(prefix, "textures/gui/progress_background.png");
+	public static Identifier bucket_slot = new Identifier(prefix, "textures/gui/bucket_slot.png");
 
 	public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(
 			new Identifier(prefix, "machines"),

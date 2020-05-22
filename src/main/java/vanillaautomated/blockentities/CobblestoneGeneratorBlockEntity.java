@@ -2,6 +2,7 @@ package vanillaautomated.blockentities;
 
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
+import net.minecraft.advancement.criterion.ConsumeItemCriterion;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -30,11 +31,10 @@ import vanillaautomated.VanillaAutomatedBlocks;
 
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 
-public class FisherBlockEntity extends BlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class CobblestoneGeneratorBlockEntity extends BlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 
-    DefaultedList<ItemStack> items = DefaultedList.ofSize(10, ItemStack.EMPTY);
+    DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     private Text customName;
     private int processingTime;
     private int fuelTime;
@@ -42,10 +42,9 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
     private int speed = 200; // TODO: config file
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
-    public boolean hasWater = false;
 
-    public FisherBlockEntity() {
-        super(VanillaAutomatedBlocks.fisherBlockEntity);
+    public CobblestoneGeneratorBlockEntity() {
+        super(VanillaAutomatedBlocks.cobblestoneGeneratorBlockEntity);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -94,7 +93,7 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
 
     @Override
     public int size() {
-        return 10;
+        return 4;
     }
 
     @Override
@@ -104,7 +103,7 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
 
     @Override
     public ItemStack getStack(int slot) {
-        return (ItemStack) this.items.get(slot);
+        return this.items.get(slot);
     }
 
     @Override
@@ -138,11 +137,15 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
-        if (slot > 0) {
-            return false;
-        } else {
-            ItemStack itemStack = this.items.get(1);
+        if (slot == 0) {
+            return stack.getItem() == Items.WATER_BUCKET;
+        } else if (slot == 1) {
+            return stack.getItem() == Items.LAVA_BUCKET;
+        } else if (slot == 2) {
+            ItemStack itemStack = this.items.get(2);
             return canUseAsFuel(stack) || stack.getItem() == Items.BUCKET && itemStack.getItem() != Items.BUCKET;
+        } else {
+            return true;
         }
     }
 
@@ -156,7 +159,6 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
         this.processingTime = tag.getShort("ProcessingTime");
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
-        this.hasWater = tag.getBoolean("HasWater");
     }
 
     @Override
@@ -168,7 +170,6 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putBoolean("HasWater", this.hasWater);
         return super.toTag(tag);
     }
 
@@ -177,7 +178,7 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
             return;
         }
 
-        if (!hasWater) {
+        if (items.get(0).isEmpty() ||items.get(1).isEmpty()) {
             this.processingTime = 0;
             return;
         }
@@ -188,7 +189,7 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
             this.fuelTime--;
         }
 
-        ItemStack itemStack = this.items.get(0);
+        ItemStack itemStack = this.items.get(2);
         if (this.canAcceptOutput()) {
             // Burn another item
             if (!this.isBurning()) {
@@ -201,7 +202,7 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
                     itemStack.decrement(1);
                     if (itemStack.isEmpty()) {
                         Item item2 = item.getRecipeRemainder();
-                        this.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                        this.items.set(2, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                     }
                 } else {
                     this.processingTime = 0;
@@ -224,41 +225,18 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
     }
 
     private boolean canAcceptOutput() {
-        for (int i = 1; i < size(); i++) {
-            if (items.get(i).isEmpty() || items.get(i).getCount() < items.get(i).getMaxCount()) {
-                return true;
-            }
+        if (items.get(3).isEmpty() || items.get(3).getCount() < items.get(3).getMaxCount()) {
+            return true;
         }
 
         return false;
     }
 
     private void generateItems() {
-        PlayerEntity player = world.getClosestPlayer((int) pos.getX(), (int) pos.getY(), (int) pos.getZ(), Float.MAX_VALUE, false);
-        if (player == null) {
-            return;
-        }
-
-        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).parameter(LootContextParameters.THIS_ENTITY, player).random(this.random);
-        LootTable lootTable = this.world.getServer().getLootManager().getTable(LootTables.FISHING_GAMEPLAY);
-        List<ItemStack> list = lootTable.generateLoot(builder.build(LootContextTypes.FISHING));
-
-        for (int i = 1; i < 10; i++) {
-            for (int j = 0; j < list.size(); j++) {
-                if (list.get(j).isEmpty()) {
-                    continue;
-                }
-
-                if (items.get(i).isEmpty()) {
-                    setStack(i, list.get(j));
-                    list.set(j, ItemStack.EMPTY);
-                } else if (items.get(i).isItemEqual(list.get(j))) {
-                    int amountToAdd = items.get(i).getMaxCount() - items.get(i).getCount();
-                    amountToAdd = Math.min(amountToAdd, list.get(j).getCount());
-                    items.get(i).increment(amountToAdd);
-                    list.get(j).decrement(amountToAdd);
-                }
-            }
+        if (items.get(3).isEmpty()) {
+            items.set(3, new ItemStack(Items.COBBLESTONE, 1));
+        } else {
+            items.get(3).increment(1);
         }
     }
 
@@ -277,9 +255,9 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
 
     public int[] getAvailableSlots(Direction side) {
         if (side == Direction.DOWN) {
-            return new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+            return new int[]{3};
         } else {
-            return new int[]{0};
+            return new int[]{2};
         }
     }
 
@@ -288,19 +266,12 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
     }
 
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
-        if (dir == Direction.DOWN && slot == 0) {
-            Item item = stack.getItem();
-            if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
-                return false;
-            }
-        }
-
-        return true;
+        return slot == 3;
     }
 
     @Override
     public void clear() {
-        items = DefaultedList.ofSize(10, ItemStack.EMPTY);
+        items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     }
 
     public boolean isBurning() {
@@ -330,6 +301,6 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
     }
 
     protected Text getContainerName() {
-        return new TranslatableText("block." + VanillaAutomated.prefix + ".fisher_block");
+        return new TranslatableText("block." + VanillaAutomated.prefix + ".cobblestone_generator_block");
     }
 }

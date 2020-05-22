@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iCi",
+    "iMi",
+    "iCi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:cobblestone"
+    },
+    "M": {
+      "item": "vanillaautomated:machine_block"
+    }
+  },
+  "result": {
+    "item": "vanillaautomated:cobblestone_generator_block",
+    "count": 1
+  }
+}

@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.CommandBlockBlockEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -16,8 +17,11 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 import vanillaautomated.blockentities.FisherBlockEntity;
+import vanillaautomated.blocks.CobblestoneGeneratorBlock;
 import vanillaautomated.blocks.FisherBlock;
+import vanillaautomated.gui.CobblestoneGeneratorBlockController;
 import vanillaautomated.gui.FisherBlockController;
 
 public class VanillaAutomatedBlocks {
@@ -26,27 +30,34 @@ public class VanillaAutomatedBlocks {
 
     // Block entities
     public static BlockEntityType<FisherBlockEntity> fisherBlockEntity;
+    public static BlockEntityType<CobblestoneGeneratorBlockEntity> cobblestoneGeneratorBlockEntity;
 
     // Blocks
     public static final Block machineBlock = new Block(machineBlockSettings);
     public static final FisherBlock fisherBlock = new FisherBlock(machineBlockSettings);
+    public static final CobblestoneGeneratorBlock cobblestoneGeneratorBlock = new CobblestoneGeneratorBlock(machineBlockSettings);
 
     // Stats
     public static Stat interact_with_fisher;
+    public static Stat interact_with_cobblestone_generator;
 
     public static void register() {
         // Block entities
         fisherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "fisher_block"), BlockEntityType.Builder.create(FisherBlockEntity::new, fisherBlock).build(null));
+        cobblestoneGeneratorBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), BlockEntityType.Builder.create(CobblestoneGeneratorBlockEntity::new, cobblestoneGeneratorBlock).build(null));
 
         // Blocks
         registerBlock(machineBlock, "machine_block");
         registerBlock(fisherBlock, "fisher_block");
+        registerBlock(cobblestoneGeneratorBlock, "cobblestone_generator_block");
 
         // Inventories
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, id, player, buf) -> new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
+        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), (syncId, id, player, buf) -> new CobblestoneGeneratorBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
 
         // Stats
         interact_with_fisher = registerStat("interact_with_fisher");
+        interact_with_cobblestone_generator = registerStat("interact_with_cobblestone_generator");
     }
 
     private static void registerBlock(Block block, String name) {
