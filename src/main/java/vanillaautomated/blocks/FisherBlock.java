@@ -67,7 +67,10 @@ public class FisherBlock extends MachineBlock {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof FisherBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "fisher_block"), player, (packetByteBuf -> packetByteBuf.writeBlockPos(pos)));
+            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "fisher_block"), player, (packetByteBuf -> {
+                packetByteBuf.writeBlockPos(pos);
+                packetByteBuf.writeText(((FisherBlockEntity) be).getDisplayName());
+            } ));
             player.incrementStat(VanillaAutomatedBlocks.interact_with_fisher);
         }
 

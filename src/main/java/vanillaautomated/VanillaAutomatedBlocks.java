@@ -13,6 +13,7 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatFormatter;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import vanillaautomated.blockentities.FisherBlockEntity;
@@ -42,7 +43,7 @@ public class VanillaAutomatedBlocks {
         registerBlock(fisherBlock, "fisher_block");
 
         // Inventories
-        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, id, player, buf) -> new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos())));
+        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, id, player, buf) -> new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
 
         // Stats
         interact_with_fisher = registerStat("interact_with_fisher");

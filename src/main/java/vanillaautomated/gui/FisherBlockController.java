@@ -16,7 +16,7 @@ import vanillaautomated.VanillaAutomated;
 import java.util.logging.Logger;
 
 public class FisherBlockController extends CottonCraftingController {
-    public FisherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+    public FisherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
         super(RecipeType.SMELTING, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         WMaxedPanel root = new WMaxedPanel();
@@ -26,15 +26,10 @@ public class FisherBlockController extends CottonCraftingController {
         WGridPanel machinePanel = new WGridPanel();
         machinePanel.setSize(9, 3);
 
-        Text text = context.run((world, pos) -> {
-            BlockEntity be = world.getBlockEntity(pos);
-            return be instanceof Nameable ? ((Nameable) be).getDisplayName() : new TranslatableText("block." + VanillaAutomated.prefix + ".fisher_block");
-        }).orElse(new TranslatableText("block." + VanillaAutomated.prefix + ".fisher_block"));
-
-        WLabel label = new WLabel(text);
+        WLabel label = new WLabel(title);
         label.setAlignment(Alignment.CENTER);
         root.add(label, 0, 0, 160, 10);
-        //Logger.getAnonymousLogger().warning(propertyDelegate.get(0) / propertyDelegate.get(2) + "");
+
         WBar fire = new WBar(VanillaAutomated.flames_background, VanillaAutomated.flames, 0, 2, WBar.Direction.UP);
         machinePanel.add(fire, 2, 1);
 
@@ -48,7 +43,7 @@ public class FisherBlockController extends CottonCraftingController {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 WItemSlot outputSlot = WItemSlot.of(blockInventory, lastSlotIndex).setInsertingAllowed(false);
-                machinePanel.add(outputSlot, i + 4, j);
+                machinePanel.add(outputSlot, j + 4, i);
                 lastSlotIndex++;
             }
         }

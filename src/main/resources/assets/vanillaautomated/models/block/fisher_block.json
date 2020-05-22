@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/orientable",
   "textures": {
-    "top": "vanillaautomated:block/machine_block",
+    "top": "vanillaautomated:block/machine_block_top",
     "front": "vanillaautomated:block/fisher_block",
     "side": "vanillaautomated:block/machine_block"
   }

@@ -14,7 +14,6 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameter;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -25,11 +24,9 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.blocks.FisherBlock;
 
 import java.util.List;
 import java.util.Random;
@@ -78,6 +75,8 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
                         break;
                     case 3:
                         speed = value;
+                        break;
+                    default:
                         break;
                 }
 
@@ -226,7 +225,7 @@ public class FisherBlockEntity extends BlockEntity implements SidedInventory, Ti
     }
 
     private boolean canAcceptOutput() {
-        for (int i = 0; i < size(); i++) {
+        for (int i = 1; i < size(); i++) {
             if (items.get(i).isEmpty() || items.get(i).getCount() < items.get(i).getMaxCount()) {
                 return true;
             }
