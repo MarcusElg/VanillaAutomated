@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iFi",
+    "iMi",
+    "iWi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "F": {
+      "item": "minecraft:fishing_rod"
+    },
+    "M": {
+      "item": "vanillaautomated:machine_block"
+    },
+    "W": {
+      "item": "minecraft:water_bucket"
+    }
+  },
+  "result": {
+    "item": "vanillaautomated:fisher_block",
+    "count": 1
+  }
+}

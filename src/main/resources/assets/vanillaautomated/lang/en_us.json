@@ -1,0 +1,8 @@
+{
+  "itemGroup.vanillaautomated.machines": "Vanilla Automated",
+
+  "stat.vanillaautomated.interact_with_fisher": "Interactions with Fisher",
+
+  "block.vanillaautomated.machine_block": "Machine block",
+  "block.vanillaautomated.fisher_block": "Fisher Block"
+}

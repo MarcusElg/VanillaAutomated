@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "vanillaautomated",
+  "version": "${version}",
+
+  "name": "Vanilla Automated",
+  "description": "Aims to make vanilla less grindy and allow more automation.",
+  "authors": [
+    "MCrafterzz"
+  ],
+  "contact": {
+    "sources": "https://github.com/MCrafterzz/VanillaAutomated"
+  },
+
+  "icon": "assets/vanillaautomated/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "vanillaautomated.VanillaAutomated"
+    ],
+    "client": [
+      "vanillaautomated.VanillaAutomatedClient"
+    ]
+  },
+  "mixins": [
+    "vanillaautomated.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "*"
+  }
+}

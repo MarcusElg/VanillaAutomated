@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "vanillaautomated:block/machine_block" }
+  }
+}
