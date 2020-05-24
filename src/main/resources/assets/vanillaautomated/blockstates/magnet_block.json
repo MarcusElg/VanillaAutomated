@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "vanillaautomated:block/magnet_block" }
+  }
+}

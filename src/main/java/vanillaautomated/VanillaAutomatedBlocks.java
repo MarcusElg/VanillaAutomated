@@ -19,8 +19,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 import vanillaautomated.blockentities.FisherBlockEntity;
+import vanillaautomated.blockentities.MagnetBlockEntity;
 import vanillaautomated.blocks.CobblestoneGeneratorBlock;
 import vanillaautomated.blocks.FisherBlock;
+import vanillaautomated.blocks.MagnetBlock;
 import vanillaautomated.gui.CobblestoneGeneratorBlockController;
 import vanillaautomated.gui.FisherBlockController;
 
@@ -31,11 +33,13 @@ public class VanillaAutomatedBlocks {
     // Block entities
     public static BlockEntityType<FisherBlockEntity> fisherBlockEntity;
     public static BlockEntityType<CobblestoneGeneratorBlockEntity> cobblestoneGeneratorBlockEntity;
+    public static BlockEntityType<MagnetBlockEntity> magnetBlockEntity;
 
     // Blocks
     public static final Block machineBlock = new Block(machineBlockSettings);
     public static final FisherBlock fisherBlock = new FisherBlock(machineBlockSettings);
     public static final CobblestoneGeneratorBlock cobblestoneGeneratorBlock = new CobblestoneGeneratorBlock(machineBlockSettings);
+    public static final MagnetBlock magnetBlock = new MagnetBlock(machineBlockSettings);
 
     // Stats
     public static Stat interact_with_fisher;
@@ -45,11 +49,13 @@ public class VanillaAutomatedBlocks {
         // Block entities
         fisherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "fisher_block"), BlockEntityType.Builder.create(FisherBlockEntity::new, fisherBlock).build(null));
         cobblestoneGeneratorBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), BlockEntityType.Builder.create(CobblestoneGeneratorBlockEntity::new, cobblestoneGeneratorBlock).build(null));
+        magnetBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "magnet_block"), BlockEntityType.Builder.create(MagnetBlockEntity::new, magnetBlock).build(null));
 
         // Blocks
         registerBlock(machineBlock, "machine_block");
         registerBlock(fisherBlock, "fisher_block");
         registerBlock(cobblestoneGeneratorBlock, "cobblestone_generator_block");
+        registerBlock(magnetBlock, "magnet_block");
 
         // Inventories
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, id, player, buf) -> new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));

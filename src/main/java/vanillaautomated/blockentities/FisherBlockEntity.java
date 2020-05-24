@@ -30,7 +30,6 @@ import vanillaautomated.VanillaAutomatedBlocks;
 
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class FisherBlockEntity extends BlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 

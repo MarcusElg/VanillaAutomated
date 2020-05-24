@@ -7,6 +7,7 @@
   "block.vanillaautomated.machine_block": "Machine block",
   "block.vanillaautomated.fisher_block": "Fisher Block",
   "block.vanillaautomated.cobblestone_generator_block": "Cobblestone Generator Block",
+  "block.vanillaautomated.magnet_block": "Magnet Block",
 
   "item.vanillaautomated.mob_net": "Mob Net"
 }
