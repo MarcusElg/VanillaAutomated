@@ -22,14 +22,21 @@ public class MagnetBlockEntity extends BlockEntity implements Tickable {
     public void tick() {
         Vec3d currentPos = Vec3d.of(getPos());
         currentPos.add(0.5f, 0.5f, 0.5f);
-        List<ItemEntity> entities = world.getEntities(EntityType.ITEM, new Box(currentPos.getX() - 3, currentPos.getY() - 3, currentPos.getZ() - 3, currentPos.getX() + 3, currentPos.getY() + 3, currentPos.getZ() + 3), null);
+        List<ItemEntity> entities = world.getEntities(EntityType.ITEM, new Box(currentPos.getX() - 5, currentPos.getY() - 5, currentPos.getZ() - 5, currentPos.getX() + 6, currentPos.getY() + 6, currentPos.getZ() + 6), new Predicate<ItemEntity>() {
+            @Override
+            public boolean test(ItemEntity itemEntity) {
+                return true;
+            }
+        });
 
         for (int i = 0; i < entities.size(); i++){
             ItemEntity item = entities.get(i);
-            double x = MathHelper.lerp(item.getPos().getX(), currentPos.getX(), 0.03f);
-            double y = MathHelper.lerp(item.getPos().getY(), currentPos.getY(), 0.03f);
-            double z = MathHelper.lerp(item.getPos().getZ(), currentPos.getZ(), 0.03f);
-            item.requestTeleport(x, y, z);
+
+            if (!item.isOnGround()) {
+                continue;
+            }
+
+            item.requestTeleport(currentPos.getX(), currentPos.getY(), currentPos.getZ());
         }
     }
 }

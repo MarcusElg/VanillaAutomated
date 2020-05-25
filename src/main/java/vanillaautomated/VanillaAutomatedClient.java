@@ -5,10 +5,7 @@ import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
-import vanillaautomated.gui.CobblestoneGeneratorBlockController;
-import vanillaautomated.gui.CobblestoneGeneratorBlockScreen;
-import vanillaautomated.gui.FisherBlockController;
-import vanillaautomated.gui.FisherBlockScreen;
+import vanillaautomated.gui.*;
 
 public class VanillaAutomatedClient implements ClientModInitializer {
     @Override
@@ -16,5 +13,6 @@ public class VanillaAutomatedClient implements ClientModInitializer {
         // Inventories
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, identifier, player, buf) -> new FisherBlockScreen(new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), (syncId, identifier, player, buf) -> new CobblestoneGeneratorBlockScreen(new CobblestoneGeneratorBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
+        ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "nullifier"), (syncId, identifier, player, buf) -> new NullifierScreen(new NullifierController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
     }
 }
