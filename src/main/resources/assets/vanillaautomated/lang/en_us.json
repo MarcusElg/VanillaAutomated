@@ -4,6 +4,7 @@
   "stat.vanillaautomated.interact_with_fisher": "Interactions with Fisher",
   "stat.vanillaautomated.interact_with_cobblestone_generator": "Interactions with Cobblestone Generator",
   "stat.vanillaautomated.interact_with_nullifier": "Interactions with Nullifier",
+  "stat.vanillaautomated.interact_with_timer": "Interactions with Timer",
 
   "block.vanillaautomated.machine_block": "Machine block",
   "block.vanillaautomated.fisher_block": "Fisher Block",
