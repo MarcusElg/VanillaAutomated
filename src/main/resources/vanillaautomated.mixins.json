@@ -4,7 +4,7 @@
   "package": "vanillaautomated.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "InfiniteTradesMixin"
+    "VillagerMixin"
   ],
   "client": [
 

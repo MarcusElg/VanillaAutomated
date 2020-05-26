@@ -4,6 +4,8 @@ import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
@@ -11,7 +13,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
@@ -26,23 +27,24 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+import vanillaautomated.VanillaAutomatedItems;
 
 import java.util.List;
 import java.util.Random;
 
-public class FisherBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, Nameable, Tickable {
 
-    DefaultedList<ItemStack> items = DefaultedList.ofSize(10, ItemStack.EMPTY);
+    DefaultedList<ItemStack> items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 200; // TODO: config file
+    private int speed = 400; // TODO: config file
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
-    public boolean hasWater = false;
+    private String entityType = "";
 
-    public FisherBlockEntity() {
-        super(VanillaAutomatedBlocks.fisherBlockEntity);
+    public MobFarmBlockEntity() {
+        super(VanillaAutomatedBlocks.mobFarmBlockEntity);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -85,13 +87,22 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         };
     }
 
+    private void updateEntityType () {
+        if (items.get(0) == ItemStack.EMPTY) {
+            entityType = "";
+        } else {
+            ItemStack mobNet = items.get(0);
+            entityType = mobNet.getTag().getString("EntityId");
+        }
+    }
+
     public DefaultedList<ItemStack> getItems() {
         return items;
     }
 
     @Override
     public int size() {
-        return 10;
+        return 11;
     }
 
     @Override
@@ -106,7 +117,13 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
-        return Inventories.splitStack(this.items, slot, amount);
+        ItemStack stack = Inventories.splitStack(this.items, slot, amount);
+
+        if (slot == 0){
+            updateEntityType();
+        }
+
+        return stack;
     }
 
     @Override
@@ -122,6 +139,10 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         if (stack.getCount() > this.getMaxCountPerStack()) {
             stack.setCount(this.getMaxCountPerStack());
         }
+
+        if (slot == 0){
+            updateEntityType();
+        }
     }
 
     @Override
@@ -135,11 +156,13 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
-        if (slot > 0) {
-            return false;
-        } else {
+        if (slot == 0) {
+            return stack.getItem() == VanillaAutomatedItems.mobNet && stack.hasTag() && stack.getTag().contains("EntityId");
+        } else if (slot == 1) {
             ItemStack itemStack = this.items.get(1);
             return canUseAsFuel(stack) || stack.getItem() == Items.BUCKET && itemStack.getItem() != Items.BUCKET;
+        } else {
+            return false;
         }
     }
 
@@ -153,7 +176,8 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         this.processingTime = tag.getShort("ProcessingTime");
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
-        this.hasWater = tag.getBoolean("HasWater");
+        this.entityType = tag.getString("EntityType");
+        updateEntityType();
     }
 
     @Override
@@ -165,7 +189,7 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putBoolean("HasWater", this.hasWater);
+        tag.putString("EntityType", this.entityType);
         return super.toTag(tag);
     }
 
@@ -174,8 +198,8 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
             return;
         }
 
-        if (!hasWater) {
-            this.processingTime = 0;
+        if (entityType == ""){
+            processingTime = 0;
             return;
         }
 
@@ -185,7 +209,7 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
             this.fuelTime--;
         }
 
-        ItemStack itemStack = this.items.get(0);
+        ItemStack itemStack = this.items.get(1);
         if (this.canAcceptOutput()) {
             // Burn another item
             if (!this.isBurning()) {
@@ -221,7 +245,7 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     private boolean canAcceptOutput() {
-        for (int i = 1; i < size(); i++) {
+        for (int i = 2; i < size(); i++) {
             if (items.get(i).isEmpty() || items.get(i).getCount() < items.get(i).getMaxCount()) {
                 return true;
             }
@@ -236,11 +260,16 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
             return;
         }
 
+        CompoundTag entityData = items.get(0).getTag().getCompound("EntityData");
+        LivingEntity entity = (LivingEntity) EntityType.loadEntityWithPassengers(entityData, world, (entityx) -> {
+            return entityx;
+        });
+
         LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).parameter(LootContextParameters.THIS_ENTITY, player).random(this.random);
-        LootTable lootTable = this.world.getServer().getLootManager().getTable(LootTables.FISHING_GAMEPLAY);
+        LootTable lootTable = this.world.getServer().getLootManager().getTable(entity.getLootTable());
         List<ItemStack> list = lootTable.generateLoot(builder.build(LootContextTypes.FISHING));
 
-        for (int i = 1; i < 10; i++) {
+        for (int i = 2; i < 11; i++) {
             for (int j = 0; j < list.size(); j++) {
                 if (list.get(j).isEmpty()) {
                     continue;
@@ -274,9 +303,9 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     public int[] getAvailableSlots(Direction side) {
         if (side == Direction.DOWN) {
-            return new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+            return new int[]{2, 3, 4, 5, 6, 7, 8, 9, 10};
         } else {
-            return new int[]{0};
+            return new int[]{1};
         }
     }
 
@@ -285,19 +314,23 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
-        if (dir == Direction.DOWN && slot == 0) {
+        if (dir == Direction.DOWN && slot == 1) {
             Item item = stack.getItem();
             if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
                 return false;
             }
         }
 
-        return true;
+        if (slot == 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override
     public void clear() {
-        items = DefaultedList.ofSize(10, ItemStack.EMPTY);
+        items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     }
 
     public boolean isBurning() {
@@ -311,6 +344,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("block." + VanillaAutomated.prefix + ".fisher_block");
+        return new TranslatableText("block." + VanillaAutomated.prefix + ".mob_farm_block");
     }
 }

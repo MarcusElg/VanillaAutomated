@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "vanillaautomated:block/mob_farm_block" }
+  }
+}

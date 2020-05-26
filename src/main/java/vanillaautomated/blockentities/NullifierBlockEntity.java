@@ -1,10 +1,6 @@
 package vanillaautomated.blockentities;
 
-import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
@@ -13,23 +9,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 
-import java.util.List;
-import java.util.function.Predicate;
-
-public class NullifierBlockEntity extends BlockEntity implements Inventory, Nameable {
+public class NullifierBlockEntity extends MachineBlockEntity implements Inventory, Nameable {
     public NullifierBlockEntity() {
         super(VanillaAutomatedBlocks.nullifierBlockEntity);
     }
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
-    private Text customName;
 
     @Override
     public int size() {
@@ -91,23 +80,7 @@ public class NullifierBlockEntity extends BlockEntity implements Inventory, Name
         return super.toTag(tag);
     }
 
-    public void setCustomName(Text customName) {
-        this.customName = customName;
-    }
-
-    public Text getName() {
-        return this.customName != null ? this.customName : this.getContainerName();
-    }
-
-    public Text getDisplayName() {
-        return this.getName();
-    }
-
-    @Nullable
-    public Text getCustomName() {
-        return this.customName;
-    }
-
+    @Override
     protected Text getContainerName() {
         return new TranslatableText("block." + VanillaAutomated.prefix + ".nullifier");
     }

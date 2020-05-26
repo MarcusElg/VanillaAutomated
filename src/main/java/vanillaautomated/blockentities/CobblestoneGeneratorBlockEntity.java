@@ -2,24 +2,16 @@ package vanillaautomated.blockentities;
 
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
-import net.minecraft.advancement.criterion.ConsumeItemCriterion;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
@@ -28,14 +20,11 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
-
-import java.util.List;
 import java.util.Random;
 
-public class CobblestoneGeneratorBlockEntity extends BlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
-    private Text customName;
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
@@ -283,23 +272,7 @@ public class CobblestoneGeneratorBlockEntity extends BlockEntity implements Side
         return propertyDelegate;
     }
 
-    public void setCustomName(Text customName) {
-        this.customName = customName;
-    }
-
-    public Text getName() {
-        return this.customName != null ? this.customName : this.getContainerName();
-    }
-
-    public Text getDisplayName() {
-        return this.getName();
-    }
-
-    @Nullable
-    public Text getCustomName() {
-        return this.customName;
-    }
-
+    @Override
     protected Text getContainerName() {
         return new TranslatableText("block." + VanillaAutomated.prefix + ".cobblestone_generator_block");
     }

@@ -1,9 +1,6 @@
 package vanillaautomated.blockentities;
 
-import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
@@ -13,10 +10,7 @@ import net.minecraft.util.Tickable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 
-import java.util.logging.Logger;
-
-public class TimerBlockEntity extends BlockEntity implements Nameable, Tickable {
-    private Text customName;
+public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Tickable {
     private int currentTime = 0;
     private int time = 20;
     private boolean disabled = false;
@@ -45,23 +39,7 @@ public class TimerBlockEntity extends BlockEntity implements Nameable, Tickable 
         return super.toTag(tag);
     }
 
-    public void setCustomName(Text customName) {
-        this.customName = customName;
-    }
-
-    public Text getName() {
-        return this.customName != null ? this.customName : this.getContainerName();
-    }
-
-    public Text getDisplayName() {
-        return this.getName();
-    }
-
-    @Nullable
-    public Text getCustomName() {
-        return this.customName;
-    }
-
+    @Override
     protected Text getContainerName() {
         return new TranslatableText("block." + VanillaAutomated.prefix + ".timer");
     }

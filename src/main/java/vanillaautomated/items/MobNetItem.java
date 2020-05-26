@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +25,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 public class MobNetItem extends Item {
 
@@ -37,7 +39,7 @@ public class MobNetItem extends Item {
             return false;
         }
 
-        if (entity instanceof EnderDragonEntity || entity instanceof WitherEntity || entity instanceof PlayerEntity || !(entity instanceof LivingEntity)) {
+        if (!(entity instanceof LivingEntity) || entity instanceof EnderDragonEntity || entity instanceof WitherEntity || entity instanceof PlayerEntity || entity instanceof FishEntity) {
             return false;
         }
 

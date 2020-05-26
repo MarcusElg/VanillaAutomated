@@ -7,7 +7,7 @@ import vanillaautomated.items.MobNetItem;
 
 public class VanillaAutomatedItems {
 
-    private static final MobNetItem mobNet = new MobNetItem(new Item.Settings().group(VanillaAutomated.ITEM_GROUP));
+    public static final MobNetItem mobNet = new MobNetItem(new Item.Settings().group(VanillaAutomated.ITEM_GROUP).maxCount(1));
 
     public static void register () {
         // Items

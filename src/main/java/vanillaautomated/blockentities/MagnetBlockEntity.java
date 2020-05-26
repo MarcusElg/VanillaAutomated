@@ -1,12 +1,10 @@
 package vanillaautomated.blockentities;
 
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import vanillaautomated.VanillaAutomatedBlocks;
 

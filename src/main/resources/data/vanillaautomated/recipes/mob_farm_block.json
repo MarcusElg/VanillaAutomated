@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "imi",
+    "iMi",
+    "iDi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "M": {
+      "item": "vanillaautomated:machine_block"
+    },
+    "m": {
+      "item": "vanillaautomated:mob_net"
+    },
+    "D": {
+      "item": "minecraft:diamond_block"
+    }
+  },
+  "result": {
+    "item": "vanillaautomated:mob_farm_block",
+    "count": 1
+  }
+}
