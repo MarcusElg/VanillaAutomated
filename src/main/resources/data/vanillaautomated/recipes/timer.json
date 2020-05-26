@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "srs",
+    "rRr",
+    "srs"
+  ],
+  "key": {
+    "s": {
+      "item": "minecraft:stone"
+    },
+    "r": {
+      "item": "minecraft:redstone_torch"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    }
+  },
+  "result": {
+    "item": "vanillaautomated:timer",
+    "count": 1
+  }
+}

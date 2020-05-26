@@ -10,6 +10,9 @@
   "block.vanillaautomated.cobblestone_generator_block": "Cobblestone Generator Block",
   "block.vanillaautomated.magnet_block": "Magnet Block",
   "block.vanillaautomated.nullifier": "Nullifier",
+  "block.vanillaautomated.timer": "Timer",
+
+  "vanillaautomated.container.timer.speed": "Speed",
 
   "item.vanillaautomated.mob_net": "Mob Net"
 }

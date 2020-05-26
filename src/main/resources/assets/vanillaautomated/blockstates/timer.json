@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "enabled=false": {
+      "model": "vanillaautomated:block/timer_off"
+    },
+    "enabled=true": {
+      "model": "vanillaautomated:block/timer_on"
+    }
+  }
+}

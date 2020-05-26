@@ -1,0 +1,6 @@
+{
+  "parent": "vanillaautomated:block/timer",
+  "textures": {
+    "torch": "block/redstone_torch"
+  }
+}
