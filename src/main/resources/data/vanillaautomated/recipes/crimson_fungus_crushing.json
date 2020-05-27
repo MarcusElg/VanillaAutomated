@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:crimson_stem"
+  },
+  "result" : {
+    "item": "minecraft:crimson_fungus",
+    "count": 1
+  }
+}

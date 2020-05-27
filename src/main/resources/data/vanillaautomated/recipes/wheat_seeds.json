@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:wheat"
+  },
+  "result" : {
+    "item": "minecraft:wheat_seeds",
+    "count": 1
+  }
+}

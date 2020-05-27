@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:dark_oak_log"
+  },
+  "result" : {
+    "item": "minecraft:dark_oak_sapling",
+    "count": 1
+  }
+}

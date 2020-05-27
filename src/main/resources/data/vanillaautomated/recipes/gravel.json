@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:stone"
+  },
+  "result" : {
+    "item": "minecraft:gravel",
+    "count": 1
+  }
+}

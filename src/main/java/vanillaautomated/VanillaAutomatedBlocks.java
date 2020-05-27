@@ -32,6 +32,7 @@ public class VanillaAutomatedBlocks {
     public static BlockEntityType<TimerBlockEntity> timerBlockEntity;
     public static BlockEntityType<MobFarmBlockEntity> mobFarmBlockEntity;
     public static BlockEntityType<FarmerBlockEntity> farmerBlockEntity;
+    public static BlockEntityType<CrusherBlockEntity> crusherBlockEntity;
 
     // Blocks
     public static final Block machineBlock = new Block(machineBlockSettings);
@@ -42,6 +43,7 @@ public class VanillaAutomatedBlocks {
     public static final TimerBlock timerBlock = new TimerBlock(FabricBlockSettings.copy(Blocks.REPEATER));
     public static final MobFarmBlock mobFarmBlock = new MobFarmBlock(machineBlockSettings);
     public static final FarmerBlock farmerBlock = new FarmerBlock(machineBlockSettings);
+    public static final CrusherBlock crusherBlock = new CrusherBlock(machineBlockSettings);
 
     // Stats
     public static Stat interact_with_fisher;
@@ -50,6 +52,7 @@ public class VanillaAutomatedBlocks {
     public static Stat interact_with_timer;
     public static Stat interact_with_mob_farm;
     public static Stat interact_with_farmer;
+    public static Stat interact_with_crusher;
 
     public static void register() {
         // Block entities
@@ -60,7 +63,7 @@ public class VanillaAutomatedBlocks {
         timerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "timer"), BlockEntityType.Builder.create(TimerBlockEntity::new, timerBlock).build(null));
         mobFarmBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "mob_farm_block"), BlockEntityType.Builder.create(MobFarmBlockEntity::new, mobFarmBlock).build(null));
         farmerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "farmer_block"), BlockEntityType.Builder.create(FarmerBlockEntity::new, farmerBlock).build(null));
-
+        crusherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "crusher_block"), BlockEntityType.Builder.create(CrusherBlockEntity::new, crusherBlock).build(null));
 
         // Blocks
         registerBlock(machineBlock, "machine_block");
@@ -71,6 +74,7 @@ public class VanillaAutomatedBlocks {
         registerBlock(timerBlock, "timer");
         registerBlock(mobFarmBlock, "mob_farm_block");
         registerBlock(farmerBlock, "farmer_block");
+        registerBlock(crusherBlock, "crusher_block");
 
         // Inventories
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, id, player, buf) -> new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
@@ -79,6 +83,7 @@ public class VanillaAutomatedBlocks {
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "timer"), (syncId, id, player, buf) -> new TimerController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "mob_farm_block"), (syncId, id, player, buf) -> new MobFarmBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "farmer_block"), (syncId, id, player, buf) -> new FarmerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
+        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crusher_block"), (syncId, id, player, buf) -> new CrusherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
 
         // Stats
         interact_with_fisher = registerStat("interact_with_fisher");
@@ -87,6 +92,7 @@ public class VanillaAutomatedBlocks {
         interact_with_timer = registerStat("interact_with_timer");
         interact_with_mob_farm = registerStat("interact_with_mob_farm");
         interact_with_farmer = registerStat("interact_with_farmer");
+        interact_with_crusher = registerStat("interact_with_crusher");
     }
 
     private static void registerBlock(Block block, String name) {

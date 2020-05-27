@@ -10,6 +10,8 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import vanillaautomated.recipes.CrusherRecipe;
+import vanillaautomated.recipes.CrusherRecipeSerializer;
 import vanillaautomated.recipes.FarmerRecipe;
 import vanillaautomated.recipes.FarmerRecipeSerializer;
 
@@ -29,6 +31,7 @@ public class VanillaAutomated implements ModInitializer {
 			() -> new ItemStack(VanillaAutomatedBlocks.machineBlock));
 
 	public static RecipeType farmerRecipeType;
+	public static RecipeType crusherRecipeType;
 
 	@Override
 	public void onInitialize() {
@@ -38,5 +41,7 @@ public class VanillaAutomated implements ModInitializer {
 		// Recipe type
 		Registry.register(Registry.RECIPE_SERIALIZER, FarmerRecipeSerializer.ID, FarmerRecipeSerializer.INSTANCE);
 		farmerRecipeType = Registry.register(Registry.RECIPE_TYPE, new Identifier(prefix, FarmerRecipe.Type.ID), FarmerRecipe.Type.INSTANCE);
+		Registry.register(Registry.RECIPE_SERIALIZER, CrusherRecipeSerializer.ID, CrusherRecipeSerializer.INSTANCE);
+		crusherRecipeType = Registry.register(Registry.RECIPE_TYPE, new Identifier(prefix, CrusherRecipe.Type.ID), CrusherRecipe.Type.INSTANCE);
 	}
 }

@@ -10,9 +10,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public class FarmerRecipe implements Recipe<Inventory> {
-    private final Ingredient ingredient;
-    private final ItemStack output;
-    private final Identifier id;
+    protected final Ingredient ingredient;
+    protected final ItemStack output;
+    protected final Identifier id;
 
     public FarmerRecipe (Ingredient ingredient, ItemStack output, Identifier id) {
         this.ingredient = ingredient;

@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:jungle_log"
+  },
+  "result" : {
+    "item": "minecraft:jungle_sapling",
+    "count": 1
+  }
+}

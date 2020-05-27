@@ -7,14 +7,13 @@ import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
 import io.github.cottonmc.cotton.gui.widget.data.Alignment;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import vanillaautomated.VanillaAutomated;
 
-public class FarmerBlockController extends CottonCraftingController {
-    public FarmerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
+public class CrusherBlockController extends CottonCraftingController {
+    public CrusherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
         super(VanillaAutomated.farmerRecipeType, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         WMaxedPanel root = new WMaxedPanel();
@@ -31,19 +30,16 @@ public class FarmerBlockController extends CottonCraftingController {
         WItemSlot inputSlot = WItemSlot.of(blockInventory, 0);
         machinePanel.add(inputSlot, 3, 0);
 
-        WItemSlot bonemealSlot = WItemSlot.of(blockInventory, 1);
-        machinePanel.add(bonemealSlot, 4, 0);
-
         WBar fire = new WBar(VanillaAutomated.flames_background, VanillaAutomated.flames, 0, 2, WBar.Direction.UP);
         machinePanel.add(fire, 3, 1);
 
-        WItemSlot fuelSlot = WItemSlot.of(blockInventory, 2);
+        WItemSlot fuelSlot = WItemSlot.of(blockInventory, 1);
         machinePanel.add(fuelSlot, 3, 2);
 
         WBar progress = new WBar(VanillaAutomated.progress_background, VanillaAutomated.progress, 1, 3, WBar.Direction.RIGHT);
         machinePanel.add(progress, 4, 2);
 
-        WItemSlot outputSlot = WItemSlot.of(blockInventory, 3);
+        WItemSlot outputSlot = WItemSlot.of(blockInventory, 2);
         machinePanel.add(outputSlot, 5, 2);
 
         root.add(machinePanel, 0, 10);

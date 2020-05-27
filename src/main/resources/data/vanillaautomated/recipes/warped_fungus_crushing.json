@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:warped_stem"
+  },
+  "result" : {
+    "item": "minecraft:warped_fungus",
+    "count": 1
+  }
+}
