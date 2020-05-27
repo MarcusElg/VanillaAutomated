@@ -21,6 +21,9 @@
     ],
     "client": [
       "vanillaautomated.VanillaAutomatedClient"
+    ],
+    "rei_plugins_v0": [
+      "vanillaautomated.compat.REIPlugin"
     ]
   },
   "mixins": [

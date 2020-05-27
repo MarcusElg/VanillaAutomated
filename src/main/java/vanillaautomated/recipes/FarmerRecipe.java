@@ -2,27 +2,20 @@ package vanillaautomated.recipes;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 
-public class FarmerRecipe implements Recipe<Inventory> {
-    protected final Ingredient ingredient;
-    protected final ItemStack output;
-    protected final Identifier id;
+public class FarmerRecipe extends AbstractCookingRecipe {
 
     public FarmerRecipe (Ingredient ingredient, ItemStack output, Identifier id) {
-        this.ingredient = ingredient;
-        this.output = output;
-        this.id = id;
+        super(VanillaAutomated.farmerRecipeType, id, null, ingredient, output, 0, 20);
     }
 
     @Override
     public boolean matches(Inventory inv, World world) {
-        return ingredient.test(inv.getStack(0));
+        return input.test(inv.getStack(0));
     }
 
     @Override
@@ -46,7 +39,7 @@ public class FarmerRecipe implements Recipe<Inventory> {
     }
 
     public Ingredient getIngredient () {
-        return ingredient;
+        return input;
     }
 
     @Override
