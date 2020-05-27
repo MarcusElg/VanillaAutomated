@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:sugar_cane"
+  },
+  "result" : {
+    "item": "minecraft:sugar_cane",
+    "count": 2
+  }
+}

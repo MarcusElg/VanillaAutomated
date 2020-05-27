@@ -76,7 +76,7 @@ public class CobblestoneGeneratorBlock extends MachineBlock {
     @Environment(EnvType.CLIENT)
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (((CobblestoneGeneratorBlockEntity) world.getBlockEntity(pos)).isBurning()) {
-            super.randomDisplayTick(state, world, pos, random);
+            super.particles(state, world, pos, random);
         }
     }
 }

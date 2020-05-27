@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:weeping_vines"
+  },
+  "result" : {
+    "item": "minecraft:weeping_vines",
+    "count": 5
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:oak_sapling"
+  },
+  "result" : {
+    "item": "minecraft:oak_log",
+    "count": 2
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:seagrass"
+  },
+  "result" : {
+    "item": "minecraft:seagrass",
+    "count": 2
+  }
+}

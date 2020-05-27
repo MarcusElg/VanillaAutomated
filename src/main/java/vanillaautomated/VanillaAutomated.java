@@ -10,6 +10,8 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import vanillaautomated.recipes.FarmerRecipe;
+import vanillaautomated.recipes.FarmerRecipeSerializer;
 
 import java.util.Optional;
 
@@ -26,17 +28,15 @@ public class VanillaAutomated implements ModInitializer {
 			new Identifier(prefix, "machines"),
 			() -> new ItemStack(VanillaAutomatedBlocks.machineBlock));
 
+	public static RecipeType farmerRecipeType;
+
 	@Override
 	public void onInitialize() {
 		VanillaAutomatedBlocks.register();
 		VanillaAutomatedItems.register();
 
 		// Recipe type
-		Registry.register(Registry.RECIPE_TYPE, new Identifier(prefix, "farmer"), new RecipeType<Recipe>() {
-			@Override
-			public <C extends Inventory> Optional<Recipe> get(Recipe<C> recipe, World world, C inventory) {
-				return Optional.empty();
-			}
-		});
+		Registry.register(Registry.RECIPE_SERIALIZER, FarmerRecipeSerializer.ID, FarmerRecipeSerializer.INSTANCE);
+		farmerRecipeType = Registry.register(Registry.RECIPE_TYPE, new Identifier(prefix, FarmerRecipe.Type.ID), FarmerRecipe.Type.INSTANCE);
 	}
 }

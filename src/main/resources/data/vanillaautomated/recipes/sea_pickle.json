@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:sea_pickle"
+  },
+  "result" : {
+    "item": "minecraft:sea_pickle",
+    "count": 2
+  }
+}

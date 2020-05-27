@@ -1,9 +1,10 @@
 package vanillaautomated.blocks;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +22,8 @@ import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.MobFarmBlockEntity;
 
-public class MobFarmBlock extends BlockWithEntity {
+import java.util.Random;
+public class MobFarmBlock extends MachineBlock {
 
     public MobFarmBlock(Settings settings) {
         super(settings);
@@ -72,6 +74,13 @@ public class MobFarmBlock extends BlockWithEntity {
     @Override
     public BlockEntity createBlockEntity(BlockView world) {
         return new MobFarmBlockEntity();
+    }
+
+    @Environment(EnvType.CLIENT)
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        if (((MobFarmBlockEntity) world.getBlockEntity(pos)).isBurning()) {
+            super.particles(state, world, pos, random);
+        }
     }
 
 }

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iwi",
+    "iMi",
+    "ipi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "w": {
+      "item": "minecraft:wheat"
+    },
+    "M": {
+      "item": "vanillaautomated:machine_block"
+    },
+    "p": {
+      "item": "minecraft:potato"
+    }
+  },
+  "result": {
+    "item": "vanillaautomated:farmer_block",
+    "count": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:bubble_coral"
+  },
+  "result" : {
+    "item": "minecraft:bubble_coral",
+    "count": 2
+  }
+}

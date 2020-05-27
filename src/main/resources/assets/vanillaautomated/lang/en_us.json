@@ -5,7 +5,8 @@
   "stat.vanillaautomated.interact_with_cobblestone_generator": "Interactions with Cobblestone Generator",
   "stat.vanillaautomated.interact_with_nullifier": "Interactions with Nullifier",
   "stat.vanillaautomated.interact_with_timer": "Interactions with Timer",
-  "stat.vanillaautomated.interact_with_timer": "Interactions with Mob Farm",
+  "stat.vanillaautomated.interact_with_mob_farm": "Interactions with Mob Farm",
+  "stat.vanillaautomated.interact_with_farmer": "Interactions with Farmer",
 
   "block.vanillaautomated.machine_block": "Machine Block",
   "block.vanillaautomated.fisher_block": "Fisher Block",
@@ -14,6 +15,7 @@
   "block.vanillaautomated.nullifier": "Nullifier",
   "block.vanillaautomated.timer": "Timer",
   "block.vanillaautomated.mob_farm_block": "Mob Farm Block",
+  "block.vanillaautomated.farmer_block": "Farmer",
 
   "vanillaautomated.container.timer.speed": "Speed",
 

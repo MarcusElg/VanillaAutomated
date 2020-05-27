@@ -80,7 +80,7 @@ public class FisherBlock extends MachineBlock {
     @Environment(EnvType.CLIENT)
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (((FisherBlockEntity) world.getBlockEntity(pos)).isBurning()) {
-            super.randomDisplayTick(state, world, pos, random);
+            super.particles(state, world, pos, random);
         }
     }
 

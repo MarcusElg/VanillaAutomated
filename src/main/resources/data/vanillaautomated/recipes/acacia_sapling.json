@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:acacia_sapling"
+  },
+  "result" : {
+    "item": "minecraft:acacia_log",
+    "count": 2
+  }
+}

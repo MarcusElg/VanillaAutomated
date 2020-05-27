@@ -57,7 +57,7 @@ public class MachineBlock extends BlockWithEntity {
     }
 
     @Environment(EnvType.CLIENT)
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+    public void particles(BlockState state, World world, BlockPos pos, Random random) {
         double d = (double) pos.getX() + 0.5D;
         double e = (double) pos.getY() + 0.5D;
         double f = (double) pos.getZ() + 0.5D;

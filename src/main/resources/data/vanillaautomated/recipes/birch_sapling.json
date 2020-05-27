@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:farmer_recipe",
+  "ingredient" : {
+    "item": "minecraft:birch_sapling"
+  },
+  "result" : {
+    "item": "minecraft:birch_log",
+    "count": 2
+  }
+}

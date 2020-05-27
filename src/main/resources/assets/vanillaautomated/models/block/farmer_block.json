@@ -2,7 +2,7 @@
   "parent": "minecraft:block/orientable",
   "textures": {
     "top": "vanillaautomated:block/machine_block_top",
-    "front": "vanillaautomated:block/mob_farm_block",
-    "side": "vanillaautomated:block/mob_farm_block"
+    "front": "vanillaautomated:block/farmer_block",
+    "side": "vanillaautomated:block/farmer_block"
   }
 }
