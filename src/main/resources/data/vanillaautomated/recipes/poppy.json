@@ -1,10 +1,10 @@
 {
   "type": "vanillaautomated:farmer_recipe",
   "ingredient" : {
-    "item": "minecraft:sweet_berries"
+    "item": "minecraft:poppy"
   },
   "result" : {
-    "item": "minecraft:sweet_berries",
+    "item": "minecraft:poppy",
     "count": 2
   }
 }

@@ -1,10 +1,10 @@
 {
   "type": "vanillaautomated:farmer_recipe",
   "ingredient" : {
-    "item": "minecraft:vines"
+    "item": "minecraft:vine"
   },
   "result" : {
-    "item": "minecraft:vines",
+    "item": "minecraft:vine",
     "count": 2
   }
 }

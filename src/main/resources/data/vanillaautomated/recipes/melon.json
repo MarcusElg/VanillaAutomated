@@ -1,10 +1,10 @@
 {
   "type": "vanillaautomated:farmer_recipe",
   "ingredient" : {
-    "item": "minecraft:brown_mushroom"
+    "item": "minecraft:melon"
   },
   "result" : {
-    "item": "minecraft:brown_mushroom",
+    "item": "minecraft:melon",
     "count": 2
   }
 }

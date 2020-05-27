@@ -1,10 +1,10 @@
 {
   "type": "vanillaautomated:farmer_recipe",
   "ingredient" : {
-    "item": "minecraft:sweet_berries"
+    "item": "minecraft:dandelion"
   },
   "result" : {
-    "item": "minecraft:sweet_berries",
+    "item": "minecraft:dandelion",
     "count": 2
   }
 }
