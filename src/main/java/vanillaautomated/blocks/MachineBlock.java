@@ -24,16 +24,11 @@ import java.util.Random;
 
 public class MachineBlock extends BlockWithEntity {
 
-    public static final DirectionProperty FACING;
     public static final BooleanProperty POWERED;
 
     protected MachineBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(POWERED, false));
-    }
-
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerFacing().getOpposite());
+        this.setDefaultState(this.stateManager.getDefaultState().with(POWERED, false));
     }
 
     public boolean hasComparatorOutput(BlockState state) {
@@ -48,16 +43,8 @@ public class MachineBlock extends BlockWithEntity {
         return BlockRenderType.MODEL;
     }
 
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return (BlockState) state.with(FACING, rotation.rotate((Direction) state.get(FACING)));
-    }
-
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation((Direction) state.get(FACING)));
-    }
-
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING).add(POWERED);
+        builder.add(POWERED);
     }
 
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
@@ -95,7 +82,6 @@ public class MachineBlock extends BlockWithEntity {
     }
 
     static {
-        FACING = HorizontalFacingBlock.FACING;
         POWERED = Properties.POWERED;
     }
 

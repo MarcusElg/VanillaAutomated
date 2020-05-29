@@ -2,14 +2,15 @@ package vanillaautomated.blockentities;
 
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
 import net.minecraft.loot.context.LootContext;
@@ -21,29 +22,31 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+import vanillaautomated.blocks.BreakerBlock;
 
 import java.util.List;
 import java.util.Random;
 
-public class FisherBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class BreakerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(10, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 200; // TODO: config file
+    private int speed = 10; // TODO: config file
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
-    public boolean hasWater = false;
 
-    public FisherBlockEntity() {
-        super(VanillaAutomatedBlocks.fisherBlockEntity);
+    public BreakerBlockEntity() {
+        super(VanillaAutomatedBlocks.breakerBlockEntity);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -92,7 +95,7 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     public int size() {
-        return 10;
+        return 2;
     }
 
     @Override
@@ -136,8 +139,8 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     public boolean isValid(int slot, ItemStack stack) {
-        if (slot > 0) {
-            return false;
+        if (slot == 0) {
+            return stack.getItem() instanceof MiningToolItem;
         } else {
             ItemStack itemStack = this.items.get(1);
             return canUseAsFuel(stack) || stack.getItem() == Items.BUCKET && itemStack.getItem() != Items.BUCKET;
@@ -154,7 +157,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         this.processingTime = tag.getShort("ProcessingTime");
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
-        this.hasWater = tag.getBoolean("HasWater");
     }
 
     @Override
@@ -166,7 +168,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putBoolean("HasWater", this.hasWater);
         return super.toTag(tag);
     }
 
@@ -175,7 +176,10 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
             return;
         }
 
-        if (!hasWater) {
+        Direction direction = (Direction) world.getBlockState(pos).get(BreakerBlock.FACING);
+        BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
+
+        if (world.getBlockState(position).isAir() || world.getBlockState(position).getHardness(world, position) > 16000000 || world.getBlockState(position).getHardness(world, position) == -1 || world.getBlockState(position).getBlock().hasBlockEntity()) {
             this.processingTime = 0;
             return;
         }
@@ -195,49 +199,35 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
             this.fuelTime--;
         }
 
-        ItemStack itemStack = this.items.get(0);
-        if (this.canAcceptOutput()) {
-            // Burn another item
-            if (!this.isBurning()) {
-                if (!itemStack.isEmpty()) {
-                    this.maxFuelTime = this.getFuelTime(itemStack);
-                    this.fuelTime = this.maxFuelTime;
-                    changed = true;
-
-                    Item item = itemStack.getItem();
-                    itemStack.decrement(1);
-                    if (itemStack.isEmpty()) {
-                        Item item2 = item.getRecipeRemainder();
-                        this.items.set(0, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
-                    }
-                } else {
-                    this.processingTime = 0;
-                }
-            }
-
-            // Generate items
-            if (this.processingTime == speed) {
-                this.processingTime = 0;
-                this.generateItems();
+        ItemStack itemStack = this.items.get(1);
+        // Burn another item
+        if (!this.isBurning()) {
+            if (!itemStack.isEmpty()) {
+                this.maxFuelTime = this.getFuelTime(itemStack);
+                this.fuelTime = this.maxFuelTime;
                 changed = true;
+
+                Item item = itemStack.getItem();
+                itemStack.decrement(1);
+                if (itemStack.isEmpty()) {
+                    Item item2 = item.getRecipeRemainder();
+                    this.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                }
+            } else {
+                this.processingTime = 0;
             }
-        } else {
+        }
+
+        // Generate items
+        if (this.processingTime == speed) {
             this.processingTime = 0;
+            this.generateItems();
+            changed = true;
         }
 
         if (changed) {
             this.markDirty();
         }
-    }
-
-    private boolean canAcceptOutput() {
-        for (int i = 1; i < size(); i++) {
-            if (items.get(i).isEmpty() || items.get(i).getCount() < items.get(i).getMaxCount()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void generateItems() {
@@ -246,27 +236,34 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
             return;
         }
 
-        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).parameter(LootContextParameters.THIS_ENTITY, player).random(this.random);
-        LootTable lootTable = this.world.getServer().getLootManager().getTable(LootTables.FISHING_GAMEPLAY);
-        List<ItemStack> list = lootTable.generateLoot(builder.build(LootContextTypes.FISHING));
+        Direction direction = (Direction) world.getBlockState(pos).get(BreakerBlock.FACING);
+        BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
+        Block block = world.getBlockState(position).getBlock();
+        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, items.get(0)).parameter(LootContextParameters.THIS_ENTITY, player).parameter(LootContextParameters.BLOCK_STATE, world.getBlockState(position)).random(this.random);
+        LootTable lootTable = this.world.getServer().getLootManager().getTable(block.getLootTableId());
 
-        for (int i = 1; i < 10; i++) {
-            for (int j = 0; j < list.size(); j++) {
-                if (list.get(j).isEmpty()) {
-                    continue;
-                }
+        if (!items.get(0).isEmpty()) {
+            MiningToolItem miningToolItem = (MiningToolItem) items.get(0).getItem();
 
-                if (items.get(i).isEmpty()) {
-                    setStack(i, list.get(j));
-                    list.set(j, ItemStack.EMPTY);
-                } else if (items.get(i).isItemEqual(list.get(j))) {
-                    int amountToAdd = items.get(i).getMaxCount() - items.get(i).getCount();
-                    amountToAdd = Math.min(amountToAdd, list.get(j).getCount());
-                    items.get(i).increment(amountToAdd);
-                    list.get(j).decrement(amountToAdd);
-                }
+            if (miningToolItem.isEffectiveOn(world.getBlockState(position))) {
+                items.get(0).damage(1, random, null);
+            } else {
+                items.get(0).damage(3, random, null);
+            }
+
+            if (items.get(0).getDamage() >= items.get(0).getMaxDamage()) {
+                items.set(0, ItemStack.EMPTY);
             }
         }
+
+        world.setBlockState(position, Blocks.AIR.getDefaultState());
+
+        List<ItemStack> list = lootTable.generateLoot(builder.build(LootContextTypes.BLOCK));
+        list.forEach((itemStack) -> {
+            ItemEntity itemEntity = new ItemEntity(world, position.getX(), position.getY(), position.getZ(), itemStack.copy());
+            itemEntity.setToDefaultPickupDelay();
+            world.spawnEntity(itemEntity);
+        });
     }
 
     protected int getFuelTime(ItemStack fuel) {
@@ -284,9 +281,11 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     public int[] getAvailableSlots(Direction side) {
         if (side == Direction.DOWN) {
-            return new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
-        } else {
+            return new int[]{};
+        } else if (side == Direction.UP) {
             return new int[]{0};
+        } else {
+            return new int[]{1};
         }
     }
 
@@ -295,19 +294,19 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     public boolean canExtract(int slot, ItemStack stack, Direction dir) {
-        if (dir == Direction.DOWN && slot == 0) {
+        if (dir == Direction.DOWN && slot == 1) {
             Item item = stack.getItem();
             if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
                 return false;
             }
         }
 
-        return true;
+        return false;
     }
 
     @Override
     public void clear() {
-        items = DefaultedList.ofSize(10, ItemStack.EMPTY);
+        items = DefaultedList.ofSize(2, ItemStack.EMPTY);
     }
 
     public boolean isBurning() {
@@ -321,6 +320,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("block." + VanillaAutomated.prefix + ".fisher_block");
+        return new TranslatableText("block." + VanillaAutomated.prefix + ".breaker_block");
     }
 }

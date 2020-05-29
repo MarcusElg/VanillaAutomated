@@ -8,6 +8,7 @@
   "stat.vanillaautomated.interact_with_mob_farm": "Interactions with Mob Farm",
   "stat.vanillaautomated.interact_with_farmer": "Interactions with Farmer",
   "stat.vanillaautomated.interact_with_crusher": "Interactions with Crusher",
+  "stat.vanillaautomated.interact_with_breaker": "Interactions with Breaker",
 
   "block.vanillaautomated.machine_block": "Machine Block",
   "block.vanillaautomated.fisher_block": "Fisher",
@@ -18,6 +19,7 @@
   "block.vanillaautomated.mob_farm_block": "Mob Farm Block",
   "block.vanillaautomated.farmer_block": "Farmer",
   "block.vanillaautomated.crusher_block": "Crusher",
+  "block.vanillaautomated.breaker_block": "Breaker",
 
   "vanillaautomated.container.timer.speed": "Speed",
 
