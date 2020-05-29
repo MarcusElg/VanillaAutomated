@@ -29,14 +29,14 @@ public class REIPlugin implements REIPluginV0 {
 
     @Override
     public void registerPluginCategories(RecipeHelper recipeHelper) {
-        FARMING_CATEGORY = new DefaultCookingCategory(FARMING, EntryStack.create(VanillaAutomatedBlocks.farmerBlock), "category.rei.farming");
-        recipeHelper.registerCategory(FARMING_CATEGORY);
+        //FARMING_CATEGORY = new DefaultCookingCategory(FARMING, EntryStack.create(VanillaAutomatedBlocks.farmerBlock), "category.rei.farming");
+        //recipeHelper.registerCategory(FARMING_CATEGORY);
         //recipeHelper.registerCategory(new DefaultCookingCategory(CRUSHING, EntryStack.create(VanillaAutomatedBlocks.crusherBlock), "category.rei.crushing"));
     }
 
     @Override
     public void registerRecipeDisplays(RecipeHelper recipeHelper) {
-        recipeHelper.registerRecipes(FARMING, FarmerRecipe.class, FarmingDisplay::new);
+        //recipeHelper.registerRecipes(FARMING, FarmerRecipe.class, FarmingDisplay::new);
         //recipeHelper.registerRecipes(CRUSHING, CrusherRecipe.class, DefaultSmeltingDisplay::new);
     }
 }

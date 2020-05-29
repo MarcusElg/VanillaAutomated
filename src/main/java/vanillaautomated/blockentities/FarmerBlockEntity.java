@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
@@ -181,6 +182,11 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         boolean changed = false;
         if (this.isBurning()) {
             this.fuelTime--;
+        }
+
+        // Freeze when powered
+        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+            return;
         }
 
         ItemStack itemStack = this.items.get(2);

@@ -19,6 +19,16 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ti
         super(VanillaAutomatedBlocks.timerBlockEntity);
     }
 
+    public void modifyTime(int time) {
+        this.time += time;
+        this.time = Math.max(2, this.time); // 1/10 second
+        this.time = Math.min(72000, this.time); // 1 hour
+    }
+
+    public int getTime() {
+        return time;
+    }
+
     @Override
     public void fromTag(BlockState state, CompoundTag tag) {
         super.fromTag(state, tag);

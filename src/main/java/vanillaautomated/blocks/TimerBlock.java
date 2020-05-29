@@ -71,6 +71,7 @@ public class TimerBlock extends BlockWithEntity {
             ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "timer"), player, (packetByteBuf -> {
                 packetByteBuf.writeBlockPos(pos);
                 packetByteBuf.writeText(((TimerBlockEntity) be).getDisplayName());
+                packetByteBuf.writeInt(((TimerBlockEntity)be).getTime());
             } ));
             player.incrementStat(VanillaAutomatedBlocks.interact_with_timer);
         }

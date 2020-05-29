@@ -7,10 +7,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -22,10 +25,11 @@ import java.util.Random;
 public class MachineBlock extends BlockWithEntity {
 
     public static final DirectionProperty FACING;
+    public static final BooleanProperty POWERED;
 
     protected MachineBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(POWERED, false));
     }
 
     public BlockState getPlacementState(ItemPlacementContext ctx) {
@@ -53,7 +57,27 @@ public class MachineBlock extends BlockWithEntity {
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING).add(POWERED);
+    }
+
+    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
+        if (!world.isClient) {
+            boolean bl = (Boolean)state.get(POWERED);
+            if (bl != world.isReceivingRedstonePower(pos)) {
+                if (bl) {
+                    world.getBlockTickScheduler().schedule(pos, this, 4);
+                } else {
+                    world.setBlockState(pos, (BlockState)state.cycle(POWERED), 2);
+                }
+            }
+
+        }
+    }
+
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        if ((Boolean)state.get(POWERED) && !world.isReceivingRedstonePower(pos)) {
+            world.setBlockState(pos, (BlockState)state.cycle(POWERED), 2);
+        }
     }
 
     @Environment(EnvType.CLIENT)
@@ -72,6 +96,7 @@ public class MachineBlock extends BlockWithEntity {
 
     static {
         FACING = HorizontalFacingBlock.FACING;
+        POWERED = Properties.POWERED;
     }
 
     @Override

@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
@@ -20,6 +21,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+
 import java.util.Random;
 
 public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
@@ -167,8 +169,17 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
             return;
         }
 
-        if (items.get(0).isEmpty() ||items.get(1).isEmpty()) {
+        if (items.get(0).isEmpty() || items.get(1).isEmpty()) {
             this.processingTime = 0;
+            return;
+        }
+
+        // Freeze when powered
+        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+            if (this.isBurning()) {
+                this.fuelTime--;
+            }
+
             return;
         }
 

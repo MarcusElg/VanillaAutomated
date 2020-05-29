@@ -18,6 +18,7 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
@@ -176,6 +177,15 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
 
         if (!hasWater) {
             this.processingTime = 0;
+            return;
+        }
+
+        // Freeze when powered
+        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+            if (this.isBurning()) {
+                this.fuelTime--;
+            }
+
             return;
         }
 

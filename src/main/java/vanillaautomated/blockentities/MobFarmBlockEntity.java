@@ -19,6 +19,7 @@ import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
@@ -87,7 +88,7 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
         };
     }
 
-    private void updateEntityType () {
+    private void updateEntityType() {
         if (items.get(0) == ItemStack.EMPTY) {
             entityType = "";
         } else {
@@ -119,7 +120,7 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
     public ItemStack removeStack(int slot, int amount) {
         ItemStack stack = Inventories.splitStack(this.items, slot, amount);
 
-        if (slot == 0){
+        if (slot == 0) {
             updateEntityType();
         }
 
@@ -140,7 +141,7 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
             stack.setCount(this.getMaxCountPerStack());
         }
 
-        if (slot == 0){
+        if (slot == 0) {
             updateEntityType();
         }
     }
@@ -198,8 +199,17 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
             return;
         }
 
-        if (entityType == ""){
+        if (entityType == "") {
             processingTime = 0;
+            return;
+        }
+
+        // Freeze when powered
+        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+            if (this.isBurning()) {
+                this.fuelTime--;
+            }
+
             return;
         }
 
