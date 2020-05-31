@@ -35,6 +35,7 @@ public class VanillaAutomatedBlocks {
     public static BlockEntityType<FarmerBlockEntity> farmerBlockEntity;
     public static BlockEntityType<CrusherBlockEntity> crusherBlockEntity;
     public static BlockEntityType<BreakerBlockEntity> breakerBlockEntity;
+    public static BlockEntityType<PlacerBlockEntity> placerBlockEntity;
 
     // Blocks
     public static final Block machineBlock = new Block(machineBlockSettings);
@@ -47,6 +48,7 @@ public class VanillaAutomatedBlocks {
     public static final FarmerBlock farmerBlock = new FarmerBlock(machineBlockSettings);
     public static final CrusherBlock crusherBlock = new CrusherBlock(machineBlockSettings);
     public static final BreakerBlock breakerBlock = new BreakerBlock(machineBlockSettings);
+    public static final PlacerBlock placerBlock = new PlacerBlock(machineBlockSettings);
 
     // Stats
     public static Stat interact_with_fisher;
@@ -57,6 +59,7 @@ public class VanillaAutomatedBlocks {
     public static Stat interact_with_farmer;
     public static Stat interact_with_crusher;
     public static Stat interact_with_breaker;
+    public static Stat interact_with_placer;
 
     public static void register() {
         // Block entities
@@ -69,6 +72,7 @@ public class VanillaAutomatedBlocks {
         farmerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "farmer_block"), BlockEntityType.Builder.create(FarmerBlockEntity::new, farmerBlock).build(null));
         crusherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "crusher_block"), BlockEntityType.Builder.create(CrusherBlockEntity::new, crusherBlock).build(null));
         breakerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "breaker_block"), BlockEntityType.Builder.create(BreakerBlockEntity::new, breakerBlock).build(null));
+        placerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "placer_block"), BlockEntityType.Builder.create(PlacerBlockEntity::new, placerBlock).build(null));
 
         // Blocks
         registerBlock(machineBlock, "machine_block");
@@ -81,6 +85,7 @@ public class VanillaAutomatedBlocks {
         registerBlock(farmerBlock, "farmer_block");
         registerBlock(crusherBlock, "crusher_block");
         registerBlock(breakerBlock, "breaker_block");
+        registerBlock(placerBlock, "placer_block");
 
         // Inventories
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, id, player, buf) -> new FisherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
@@ -94,6 +99,7 @@ public class VanillaAutomatedBlocks {
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "farmer_block"), (syncId, id, player, buf) -> new FarmerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crusher_block"), (syncId, id, player, buf) -> new CrusherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "breaker_block"), (syncId, id, player, buf) -> new BreakerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
+        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "placer_block"), (syncId, id, player, buf) -> new PlacerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
 
         // Stats
         interact_with_fisher = registerStat("interact_with_fisher");
@@ -104,6 +110,7 @@ public class VanillaAutomatedBlocks {
         interact_with_farmer = registerStat("interact_with_farmer");
         interact_with_crusher = registerStat("interact_with_crusher");
         interact_with_breaker = registerStat("interact_with_breaker");
+        interact_with_placer = registerStat("interact_with_placer");
     }
 
     private static void registerBlock(Block block, String name) {

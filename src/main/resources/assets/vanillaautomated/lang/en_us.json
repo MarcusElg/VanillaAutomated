@@ -9,6 +9,7 @@
   "stat.vanillaautomated.interact_with_farmer": "Interactions with Farmer",
   "stat.vanillaautomated.interact_with_crusher": "Interactions with Crusher",
   "stat.vanillaautomated.interact_with_breaker": "Interactions with Breaker",
+  "stat.vanillaautomated.interact_with_placer": "Interactions with Placer",
 
   "block.vanillaautomated.machine_block": "Machine Block",
   "block.vanillaautomated.fisher_block": "Fisher",
@@ -20,6 +21,7 @@
   "block.vanillaautomated.farmer_block": "Farmer",
   "block.vanillaautomated.crusher_block": "Crusher",
   "block.vanillaautomated.breaker_block": "Breaker",
+  "block.vanillaautomated.placer_block": "Placer",
 
   "vanillaautomated.container.timer.speed": "Speed",
 

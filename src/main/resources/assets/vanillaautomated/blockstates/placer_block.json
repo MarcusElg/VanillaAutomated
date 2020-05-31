@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "vanillaautomated:block/placer_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "vanillaautomated:block/placer_block"
+    },
+    "facing=south": {
+      "model": "vanillaautomated:block/placer_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "vanillaautomated:block/placer_block",
+      "y": 270
+    }
+  }
+}

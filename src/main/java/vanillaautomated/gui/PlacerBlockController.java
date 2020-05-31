@@ -10,8 +10,8 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import vanillaautomated.VanillaAutomated;
 
-public class BreakerBlockController extends CottonCraftingController {
-    public BreakerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
+public class PlacerBlockController extends CottonCraftingController {
+    public PlacerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
         super(RecipeType.SMELTING, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         WMaxedPanel root = new WMaxedPanel();
@@ -30,9 +30,6 @@ public class BreakerBlockController extends CottonCraftingController {
 
         WItemSlot itemSlot = WItemSlot.of(blockInventory, 0);
         machinePanel.add(itemSlot, 3, 0);
-
-        WSprite toolOverlay = new WSprite(VanillaAutomated.tool_slot);
-        machinePanel.add(toolOverlay, 3, 0);
 
         WItemSlot fuelSlot = WItemSlot.of(blockInventory, 1);
         machinePanel.add(fuelSlot, 3, 2);

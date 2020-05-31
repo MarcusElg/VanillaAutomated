@@ -4,25 +4,16 @@ import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.*;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
@@ -30,12 +21,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.blocks.BreakerBlock;
+import vanillaautomated.blocks.PlacerBlock;
 
-import java.util.List;
 import java.util.Random;
 
-public class BreakerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class PlacerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
     private int processingTime;
@@ -45,8 +35,8 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
 
-    public BreakerBlockEntity() {
-        super(VanillaAutomatedBlocks.breakerBlockEntity);
+    public PlacerBlockEntity() {
+        super(VanillaAutomatedBlocks.placerBlockEntity);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -140,7 +130,7 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
     @Override
     public boolean isValid(int slot, ItemStack stack) {
         if (slot == 0) {
-            return stack.getItem() instanceof MiningToolItem;
+            return stack.getItem() instanceof BlockItem;
         } else {
             ItemStack itemStack = this.items.get(1);
             return canUseAsFuel(stack) || stack.getItem() == Items.BUCKET && itemStack.getItem() != Items.BUCKET;
@@ -176,20 +166,37 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
             return;
         }
 
-        Direction direction = (Direction) world.getBlockState(pos).get(BreakerBlock.FACING);
-        BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
-
         if (this.isBurning()) {
             this.fuelTime--;
         }
 
-        if (world.getBlockState(position).isAir() || world.getBlockState(position).getHardness(world, position) > 16000000 || world.getBlockState(position).getHardness(world, position) == -1 || world.getBlockState(position).getBlock().hasBlockEntity()) {
+        if (items.get(0).isEmpty()) {
             this.processingTime = 0;
             return;
         }
 
         // Freeze when powered
         if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+            this.processingTime = 0;
+            return;
+        }
+
+        PlayerEntity player = world.getClosestPlayer((int) pos.getX(), (int) pos.getY(), (int) pos.getZ(), Float.MAX_VALUE, false);
+        if (player == null) {
+            return;
+        }
+
+        Direction direction = (Direction) world.getBlockState(pos).get(PlacerBlock.FACING);
+        BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
+        Block block = ((BlockItem)items.get(0).getItem()).getBlock();
+
+        if (!block.canPlaceAt(block.getDefaultState(), world, position)) {
+            this.processingTime = 0;
+            return;
+        }
+
+        if (!world.getBlockState(position).getMaterial().isReplaceable()) {
+            this.processingTime = 0;
             return;
         }
 
@@ -220,7 +227,7 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         // Generate items
         if (this.processingTime == speed) {
             this.processingTime = 0;
-            this.generateItems();
+            this.placeBlock(position, block);
             changed = true;
         }
 
@@ -229,40 +236,9 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         }
     }
 
-    private void generateItems() {
-        PlayerEntity player = world.getClosestPlayer((int) pos.getX(), (int) pos.getY(), (int) pos.getZ(), Float.MAX_VALUE, false);
-        if (player == null) {
-            return;
-        }
-
-        Direction direction = (Direction) world.getBlockState(pos).get(BreakerBlock.FACING);
-        BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
-        Block block = world.getBlockState(position).getBlock();
-        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, items.get(0)).parameter(LootContextParameters.THIS_ENTITY, player).parameter(LootContextParameters.BLOCK_STATE, world.getBlockState(position)).random(this.random);
-        LootTable lootTable = this.world.getServer().getLootManager().getTable(block.getLootTableId());
-
-        if (!items.get(0).isEmpty()) {
-            MiningToolItem miningToolItem = (MiningToolItem) items.get(0).getItem();
-
-            if (miningToolItem.isEffectiveOn(world.getBlockState(position))) {
-                items.get(0).damage(1, random, null);
-            } else {
-                items.get(0).damage(3, random, null);
-            }
-
-            if (items.get(0).getDamage() >= items.get(0).getMaxDamage()) {
-                items.set(0, ItemStack.EMPTY);
-            }
-        }
-
-        world.setBlockState(position, Blocks.AIR.getDefaultState());
-
-        List<ItemStack> list = lootTable.generateLoot(builder.build(LootContextTypes.BLOCK));
-        list.forEach((itemStack) -> {
-            ItemEntity itemEntity = new ItemEntity(world, position.getX(), position.getY(), position.getZ(), itemStack.copy());
-            itemEntity.setToDefaultPickupDelay();
-            world.spawnEntity(itemEntity);
-        });
+    private void placeBlock(BlockPos position, Block block) {
+        world.setBlockState(position, block.getDefaultState());
+        items.get(0).decrement(1);
     }
 
     protected int getFuelTime(ItemStack fuel) {
@@ -319,6 +295,6 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("block." + VanillaAutomated.prefix + ".breaker_block");
+        return new TranslatableText("block." + VanillaAutomated.prefix + ".placer_block");
     }
 }

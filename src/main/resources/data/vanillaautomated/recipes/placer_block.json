@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "idi",
+    "iMi",
+    "iDi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "d": {
+      "item": "minecraft:dispenser"
+    },
+    "M": {
+      "item": "vanillaautomated:machine_block"
+    },
+    "D": {
+      "item": "minecraft:dropper"
+    }
+  },
+  "result": {
+    "item": "vanillaautomated:placer_block",
+    "count": 1
+  }
+}

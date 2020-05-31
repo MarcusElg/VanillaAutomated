@@ -25,6 +25,7 @@ public class VanillaAutomatedClient implements ClientModInitializer {
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "farmer_block"), (syncId, identifier, player, buf) -> new FarmerBlockScreen(new FarmerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crusher_block"), (syncId, identifier, player, buf) -> new CrusherBlockScreen(new CrusherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "breaker_block"), (syncId, identifier, player, buf) -> new BreakerBlockScreen(new BreakerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
+        ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "placer_block"), (syncId, identifier, player, buf) -> new PlacerBlockScreen(new PlacerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
 
         // Rendering
         BlockRenderLayerMap.INSTANCE.putBlock(VanillaAutomatedBlocks.timerBlock, RenderLayer.getCutout());
