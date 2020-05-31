@@ -2,8 +2,7 @@ package vanillaautomated.blockentities;
 
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -130,7 +129,7 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
     @Override
     public boolean isValid(int slot, ItemStack stack) {
         if (slot == 0) {
-            return stack.getItem() instanceof BlockItem;
+            return stack.getItem() instanceof BlockItem && !((BlockItem)stack.getItem()).getBlock().hasBlockEntity();
         } else {
             ItemStack itemStack = this.items.get(1);
             return canUseAsFuel(stack) || stack.getItem() == Items.BUCKET && itemStack.getItem() != Items.BUCKET;
@@ -188,7 +187,7 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
 
         Direction direction = (Direction) world.getBlockState(pos).get(PlacerBlock.FACING);
         BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
-        Block block = ((BlockItem)items.get(0).getItem()).getBlock();
+        Block block = ((BlockItem) items.get(0).getItem()).getBlock();
 
         if (!block.canPlaceAt(block.getDefaultState(), world, position)) {
             this.processingTime = 0;
@@ -237,7 +236,19 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     private void placeBlock(BlockPos position, Block block) {
-        world.setBlockState(position, block.getDefaultState());
+        BlockState blockState = block.getDefaultState();
+
+        if (blockState.contains(FacingBlock.FACING)) {
+            blockState = blockState.with(FacingBlock.FACING, world.getBlockState(pos).get(PlacerBlock.FACING).getOpposite());
+        } else if (blockState.contains(HorizontalFacingBlock.FACING)) {
+            blockState = blockState.with(HorizontalFacingBlock.FACING, world.getBlockState(pos).get(PlacerBlock.FACING).getOpposite());
+        } else if (blockState.contains(HopperBlock.FACING)) {
+            blockState = blockState.with(HopperBlock.FACING, world.getBlockState(pos).get(PlacerBlock.FACING).getOpposite());
+        }
+
+        world.setBlockState(position, blockState);
+
+        block.onPlaced(world, position, blockState, null, ItemStack.EMPTY);
         items.get(0).decrement(1);
     }
 
