@@ -1,0 +1,31 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Next Generation Mob Farming"
+        },
+        "description": {
+            "text": "Craft a mob farm block"
+        },
+        "icon": {
+            "item": "vanillaautomated:mob_farm_block"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "vanillaautomated:mob_net",
+    "criteria": {
+        "item": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "vanillaautomated:mob_farm_block"
+                    }
+                ]
+            }
+        }
+    }
+}

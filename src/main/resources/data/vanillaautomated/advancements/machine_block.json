@@ -1,0 +1,31 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "The Base Of It All"
+        },
+        "description": {
+            "text": "Craft a machine block"
+        },
+        "icon": {
+            "item": "vanillaautomated:machine_block"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false,
+        "background": "vanillaautomated:textures/block/machine_block.png"
+    },
+    "criteria": {
+        "item": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "vanillaautomated:machine_block"
+                    }
+                ]
+            }
+        }
+    }
+}

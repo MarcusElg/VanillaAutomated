@@ -36,7 +36,6 @@ import vanillaautomated.gui.CrafterBlockController;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 
@@ -251,7 +250,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
         if (firstTick) {
             if (!recipeString.equals("null") && !recipeString.isEmpty()) {
-                Logger.getAnonymousLogger().warning(Identifier.tryParse(recipeString) + " " + recipeString);
                 this.currentRecipe = (CraftingRecipe) world.getRecipeManager().get(Identifier.tryParse(recipeString)).get();
                 firstTick = false;
             }

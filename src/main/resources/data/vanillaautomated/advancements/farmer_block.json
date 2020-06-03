@@ -1,0 +1,31 @@
+{
+    "__comment": "Made with TheDestruc7i0n's advancements generator: https://advancements.thedestruc7i0n.ca",
+    "display": {
+        "title": {
+            "text": "Insanely Efficient Farming!"
+        },
+        "description": {
+            "text": "Craft a farmer"
+        },
+        "icon": {
+            "item": "vanillaautomated:farmer_block"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "vanillaautomated:machine_block",
+    "criteria": {
+        "item": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "vanillaautomated:farmer_block"
+                    }
+                ]
+            }
+        }
+    }
+}
