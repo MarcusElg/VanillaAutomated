@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "vanillaautomated:block/machine_block_top",
+    "front": "vanillaautomated:block/crafter_block",
+    "side": "vanillaautomated:block/crafter_block"
+  }
+}

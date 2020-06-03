@@ -242,8 +242,6 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
             blockState = blockState.with(FacingBlock.FACING, world.getBlockState(pos).get(PlacerBlock.FACING).getOpposite());
         } else if (blockState.contains(HorizontalFacingBlock.FACING)) {
             blockState = blockState.with(HorizontalFacingBlock.FACING, world.getBlockState(pos).get(PlacerBlock.FACING).getOpposite());
-        } else if (blockState.contains(HopperBlock.FACING)) {
-            blockState = blockState.with(HopperBlock.FACING, world.getBlockState(pos).get(PlacerBlock.FACING).getOpposite());
         }
 
         world.setBlockState(position, blockState);

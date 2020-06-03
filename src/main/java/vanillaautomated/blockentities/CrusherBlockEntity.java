@@ -15,6 +15,7 @@ import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
@@ -25,7 +26,6 @@ import vanillaautomated.recipes.CrusherRecipe;
 import vanillaautomated.recipes.FarmerRecipe;
 
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class CrusherBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
 
@@ -36,6 +36,9 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
     private int speed = 200; // TODO: config file
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
+    private String recipeString = "null";
+    private CrusherRecipe currentRecipe;
+    boolean firstTick = true;
 
     public CrusherBlockEntity() {
         super(VanillaAutomatedBlocks.crusherBlockEntity);
@@ -118,6 +121,8 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         if (stack.getCount() > this.getMaxCountPerStack()) {
             stack.setCount(this.getMaxCountPerStack());
         }
+
+        updateCurrentRecipe();
     }
 
     @Override
@@ -151,6 +156,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         this.processingTime = tag.getShort("ProcessingTime");
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
+        recipeString = tag.getString("CurrentRecipe");
     }
 
     @Override
@@ -162,12 +168,20 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
+        tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
         return super.toTag(tag);
     }
 
     public void tick() {
         if (world.isClient) {
             return;
+        }
+
+        if (firstTick) {
+            if (!recipeString.equals("null") && !recipeString.isEmpty()) {
+                this.currentRecipe = (CrusherRecipe) world.getRecipeManager().get(Identifier.tryParse(recipeString)).get();
+                firstTick = false;
+            }
         }
 
         boolean changed = false;
@@ -181,9 +195,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         }
 
         ItemStack itemStack = this.items.get(1);
-        CrusherRecipe recipe = (CrusherRecipe) this.world.getRecipeManager().getFirstMatch(VanillaAutomated.crusherRecipeType, this, this.world).orElse((Object) null);
-
-        if (this.canAcceptOutput(recipe)) {
+        if (this.canAcceptOutput(currentRecipe)) {
             // Burn another item
             if (!this.isBurning()) {
                 if (!itemStack.isEmpty()) {
@@ -202,7 +214,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
                 }
             }
 
-            if (recipe == null) {
+            if (currentRecipe == null) {
                 processingTime = 0;
                 return;
             } else {
@@ -214,7 +226,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
             // Generate items
             if (this.processingTime >= speed) {
                 this.processingTime = 0;
-                this.generateItems(recipe);
+                this.generateItems(currentRecipe);
 
                 changed = true;
             }
@@ -243,12 +255,15 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         return (items.get(2).getCount() + recipe.getOutput().getCount()) <= 64;
     }
 
+    private void updateCurrentRecipe() {
+        currentRecipe = (CrusherRecipe) this.world.getRecipeManager().getFirstMatch(VanillaAutomated.crusherRecipeType, this, this.world).orElse((Object) null);
+    }
+
     private void generateItems(FarmerRecipe recipe) {
         items.get(0).decrement(1);
-        Logger.getAnonymousLogger().warning(recipe.getIngredient() + "");
-        Logger.getAnonymousLogger().warning(recipe.getOutput() + "");
+
         if (items.get(2).isEmpty()) {
-            items.set(2, recipe.getOutput());
+            items.set(2, recipe.getOutput().copy());
         } else {
             items.set(2, new ItemStack(recipe.getOutput().getItem(), items.get(2).getCount() + recipe.getOutput().getCount()));
         }

@@ -1,25 +1,29 @@
 package vanillaautomated;
 
+import com.google.gson.Gson;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.block.Blocks;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import vanillaautomated.blockentities.TimerBlockEntity;
 import vanillaautomated.recipes.CrusherRecipe;
 import vanillaautomated.recipes.CrusherRecipeSerializer;
 import vanillaautomated.recipes.FarmerRecipe;
 import vanillaautomated.recipes.FarmerRecipeSerializer;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.logging.Logger;
 
 public class VanillaAutomated implements ModInitializer {
 
@@ -38,6 +42,11 @@ public class VanillaAutomated implements ModInitializer {
 
     public static RecipeType farmerRecipeType;
     public static RecipeType crusherRecipeType;
+
+    // Vanilla stuff
+    public static final Gson gson = new Gson();
+
+    public static ArrayList<CraftingRecipe> craftingRecipes;
 
     @Override
     public void onInitialize() {
@@ -65,5 +74,20 @@ public class VanillaAutomated implements ModInitializer {
                 }
             });
         });
+    }
+
+    public static Collection<CraftingRecipe> getOrCreateCraftingRecipes (World world) {
+        if (craftingRecipes == null) {
+            Collection<Recipe<?>> allRecipes = world.getRecipeManager().values();
+
+            craftingRecipes = new ArrayList<CraftingRecipe>();
+            for (Recipe recipe : allRecipes) {
+                if (recipe.getType() == RecipeType.CRAFTING) {
+                    craftingRecipes.add((CraftingRecipe)recipe);
+                }
+            }
+        }
+
+        return craftingRecipes;
     }
 }

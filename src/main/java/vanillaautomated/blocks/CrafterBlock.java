@@ -1,7 +1,10 @@
 package vanillaautomated.blocks;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,10 +20,12 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.blockentities.NullifierBlockEntity;
+import vanillaautomated.blockentities.CrafterBlockEntity;
 
-public class NullifierBlock extends BlockWithEntity {
-    public NullifierBlock(Settings settings) {
+import java.util.Random;
+public class CrafterBlock extends MachineBlock {
+
+    public CrafterBlock(Settings settings) {
         super(settings);
     }
 
@@ -28,8 +33,8 @@ public class NullifierBlock extends BlockWithEntity {
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
         if (itemStack.hasCustomName()) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof NullifierBlockEntity) {
-                ((NullifierBlockEntity) blockEntity).setCustomName(itemStack.getName());
+            if (blockEntity instanceof CrafterBlockEntity) {
+                ((CrafterBlockEntity) blockEntity).setCustomName(itemStack.getName());
             }
         }
     }
@@ -38,7 +43,8 @@ public class NullifierBlock extends BlockWithEntity {
     public void onBlockRemoved(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof NullifierBlockEntity) {
+            if (blockEntity instanceof CrafterBlockEntity) {
+                ItemScatterer.spawn(world, pos, (Inventory) ((CrafterBlockEntity) blockEntity));
                 world.updateComparators(pos, this);
             }
         }
@@ -50,12 +56,13 @@ public class NullifierBlock extends BlockWithEntity {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
-        if (be != null && be instanceof NullifierBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "nullifier"), player, (packetByteBuf -> {
+        if (be != null && be instanceof CrafterBlockEntity) {
+            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "crafter_block"), player, (packetByteBuf -> {
                 packetByteBuf.writeBlockPos(pos);
-                packetByteBuf.writeText(((NullifierBlockEntity) be).getDisplayName());
+                packetByteBuf.writeText(((CrafterBlockEntity) be).getDisplayName());
+                packetByteBuf.writeString(((CrafterBlockEntity)be).getRecipeItems().toString().replace(" ", "").replace("[", "").replace("]", ""));
             } ));
-            player.incrementStat(VanillaAutomatedBlocks.interact_with_nullifier);
+            player.incrementStat(VanillaAutomatedBlocks.interact_with_crafter);
         }
 
         return ActionResult.SUCCESS;
@@ -67,6 +74,14 @@ public class NullifierBlock extends BlockWithEntity {
 
     @Override
     public BlockEntity createBlockEntity(BlockView world) {
-        return new NullifierBlockEntity();
+        return new CrafterBlockEntity();
     }
+
+    @Environment(EnvType.CLIENT)
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        if (((CrafterBlockEntity) world.getBlockEntity(pos)).isBurning()) {
+            super.particles(state, world, pos, random);
+        }
+    }
+
 }

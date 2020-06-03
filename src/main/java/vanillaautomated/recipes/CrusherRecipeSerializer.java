@@ -9,6 +9,8 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
+import net.minecraft.util.registry.Registry;
 import vanillaautomated.VanillaAutomated;
 
 public class CrusherRecipeSerializer implements RecipeSerializer<CrusherRecipe> {
@@ -20,7 +22,7 @@ public class CrusherRecipeSerializer implements RecipeSerializer<CrusherRecipe> 
 
     @Override
     public CrusherRecipe read(Identifier id, JsonObject json) {
-        FarmerRecipeJsonFormat recipeJson = new Gson().fromJson(json, FarmerRecipeJsonFormat.class);
+        FarmerRecipeJsonFormat recipeJson = VanillaAutomated.gson.fromJson(json, FarmerRecipeJsonFormat.class);
 
         // Validate all fields are there
         if (recipeJson.ingredient == null || recipeJson.result == null) {
@@ -30,7 +32,7 @@ public class CrusherRecipeSerializer implements RecipeSerializer<CrusherRecipe> 
         if (ShapedRecipe.getItemStack(recipeJson.result).getCount() == 0) ShapedRecipe.getItemStack(recipeJson.result).setCount(1);
 
         Ingredient input = Ingredient.fromJson(recipeJson.ingredient);
-        ItemStack output = ShapedRecipe.getItemStack(recipeJson.result);
+        ItemStack output = ShapedRecipe.getItemStack(JsonHelper.getObject(json, "result"));
 
         return new CrusherRecipe(input, output, id);
     }
