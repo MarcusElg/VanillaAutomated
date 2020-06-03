@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:amethyst_ore"
+  },
+  "result" : {
+    "item": "c:amethyst_dust",
+    "count": 1
+  }
+}

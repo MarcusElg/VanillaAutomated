@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:osmium_ore"
+  },
+  "result" : {
+    "item": "c:osmium_dust",
+    "count": 1
+  }
+}

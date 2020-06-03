@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:lead_ore"
+  },
+  "result" : {
+    "item": "c:lead_dust",
+    "count": 1
+  }
+}

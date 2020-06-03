@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:sapphire_ore"
+  },
+  "result" : {
+    "item": "c:sapphire_dust",
+    "count": 1
+  }
+}

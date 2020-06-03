@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:tin_ore"
+  },
+  "result" : {
+    "item": "c:tin_dust",
+    "count": 1
+  }
+}

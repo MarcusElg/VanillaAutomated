@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "minecraft:iron_ore"
+  },
+  "result" : {
+    "item": "c:iron_dust",
+    "count": 1
+  }
+}

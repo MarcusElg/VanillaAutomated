@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:ruby_ore"
+  },
+  "result" : {
+    "item": "c:ruby_dust",
+    "count": 1
+  }
+}

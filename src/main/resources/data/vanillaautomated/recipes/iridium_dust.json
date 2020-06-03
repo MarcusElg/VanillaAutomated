@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:iridium_ore"
+  },
+  "result" : {
+    "item": "c:iridium_dust",
+    "count": 1
+  }
+}

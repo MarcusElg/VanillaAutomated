@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:topaz_ore"
+  },
+  "result" : {
+    "item": "c:topaz_dust",
+    "count": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:zinc_ore"
+  },
+  "result" : {
+    "item": "c:zinc_dust",
+    "count": 1
+  }
+}

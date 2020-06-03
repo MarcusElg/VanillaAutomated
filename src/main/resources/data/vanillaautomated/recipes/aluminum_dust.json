@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:aluminum_ore"
+  },
+  "result" : {
+    "item": "c:aluminum_dust",
+    "count": 1
+  }
+}

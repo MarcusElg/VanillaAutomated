@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:titanium_ore"
+  },
+  "result" : {
+    "item": "c:titanium_dust",
+    "count": 1
+  }
+}

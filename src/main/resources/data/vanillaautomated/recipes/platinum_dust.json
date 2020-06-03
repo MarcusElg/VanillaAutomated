@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:platinum_ore"
+  },
+  "result" : {
+    "item": "c:platinum_dust",
+    "count": 1
+  }
+}

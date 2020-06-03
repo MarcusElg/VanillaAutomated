@@ -1,0 +1,10 @@
+{
+  "type": "vanillaautomated:crusher_recipe",
+  "ingredient" : {
+    "item": "c:palladium_ore"
+  },
+  "result" : {
+    "item": "c:palladium_dust",
+    "count": 1
+  }
+}
