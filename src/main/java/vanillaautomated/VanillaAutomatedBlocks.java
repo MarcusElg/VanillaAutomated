@@ -105,7 +105,10 @@ public class VanillaAutomatedBlocks {
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crusher_block"), (syncId, id, player, buf) -> new CrusherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "breaker_block"), (syncId, id, player, buf) -> new BreakerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
         ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "placer_block"), (syncId, id, player, buf) -> new PlacerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()));
-        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crafter_block"), (syncId, id, player, buf) -> new CrafterBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText(), buf.readString()));
+        ContainerProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crafter_block"), (syncId, id, player, buf) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            return new CrafterBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, blockPos), buf.readText(), blockPos, buf.readString());
+        });
 
         // Stats
         interact_with_fisher = registerStat("interact_with_fisher");

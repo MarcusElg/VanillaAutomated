@@ -26,7 +26,10 @@ public class VanillaAutomatedClient implements ClientModInitializer {
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crusher_block"), (syncId, identifier, player, buf) -> new CrusherBlockScreen(new CrusherBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "breaker_block"), (syncId, identifier, player, buf) -> new BreakerBlockScreen(new BreakerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
         ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "placer_block"), (syncId, identifier, player, buf) -> new PlacerBlockScreen(new PlacerBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText()), player));
-        ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crafter_block"), (syncId, identifier, player, buf) -> new CrafterBlockScreen(new CrafterBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, buf.readBlockPos()), buf.readText(), buf.readString()), player));
+        ScreenProviderRegistry.INSTANCE.registerFactory(new Identifier(VanillaAutomated.prefix, "crafter_block"), (syncId, id, player, buf) -> {
+            BlockPos blockPos = buf.readBlockPos();
+            return new CrafterBlockScreen(new CrafterBlockController(syncId, player.inventory, ScreenHandlerContext.create(player.world, blockPos), buf.readText(), blockPos, buf.readString()), player);
+        });
 
         // Rendering
         BlockRenderLayerMap.INSTANCE.putBlock(VanillaAutomatedBlocks.timerBlock, RenderLayer.getCutout());

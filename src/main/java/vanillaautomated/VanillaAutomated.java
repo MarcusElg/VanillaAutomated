@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import vanillaautomated.blockentities.CrafterBlockEntity;
 import vanillaautomated.blockentities.TimerBlockEntity;
 import vanillaautomated.recipes.CrusherRecipe;
 import vanillaautomated.recipes.CrusherRecipeSerializer;
@@ -35,6 +36,7 @@ public class VanillaAutomated implements ModInitializer {
     public static Identifier bucket_slot = new Identifier(prefix, "textures/gui/bucket_slot.png");
     public static Identifier tool_slot = new Identifier(prefix, "textures/gui/tool_slot.png");
     public static Identifier timer_configuration_packet = new Identifier(prefix, "timer_configuration");
+    public static Identifier crafter_reset_packet = new Identifier(prefix, "crafter_reset");
 
     public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(
             new Identifier(prefix, "machines"),
@@ -61,6 +63,7 @@ public class VanillaAutomated implements ModInitializer {
 
         // Packets
         registerTimerPacket();
+        registerCrafterPacket();
     }
 
     private void registerTimerPacket() {
@@ -69,8 +72,20 @@ public class VanillaAutomated implements ModInitializer {
             int time = attachedData.readInt();
             packetContext.getTaskQueue().execute(() -> {
                 if (packetContext.getPlayer().world.canPlayerModifyAt(packetContext.getPlayer(), blockPos)) {
-                    // Turn to diamond
+                    // Change time
                     ((TimerBlockEntity) packetContext.getPlayer().world.getBlockEntity(blockPos)).modifyTime(time);
+                }
+            });
+        });
+    }
+
+    private void registerCrafterPacket() {
+        ServerSidePacketRegistry.INSTANCE.register(crafter_reset_packet, (packetContext, attachedData) -> {
+            BlockPos blockPos = attachedData.readBlockPos();
+            packetContext.getTaskQueue().execute(() -> {
+                if (packetContext.getPlayer().world.canPlayerModifyAt(packetContext.getPlayer(), blockPos)) {
+                    // Reset recipe items
+                    ((CrafterBlockEntity) packetContext.getPlayer().world.getBlockEntity(blockPos)).resetRecipe();
                 }
             });
         });

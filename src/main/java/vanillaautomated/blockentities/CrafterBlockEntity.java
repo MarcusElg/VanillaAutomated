@@ -24,6 +24,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
@@ -101,6 +102,23 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
     public DefaultedList<Item> getRecipeItems() {
         return recipeItems;
+    }
+
+    public void resetRecipe() {
+        recipeItems.clear();
+        ItemScatterer.spawn(world, pos, this);
+        items.clear();
+    }
+
+    public void resetRecipeClient () {
+        Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+        if (currentScreen == null || !(currentScreen instanceof ScreenHandlerProvider)) {
+
+        } else {
+            for (int i = 0; i < 9; i++) {
+                ((CrafterBlockController) ((ScreenHandlerProvider) currentScreen).getScreenHandler()).itemSprites.get(i).setItem(ItemStack.EMPTY);
+            }
+        }
     }
 
     @Override
@@ -349,8 +367,8 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     private boolean checkShaped(ShapedRecipe shapedRecipe) {
-        for(int i = 0; i <= 3 - shapedRecipe.getWidth(); ++i) {
-            for(int j = 0; j <= 3 - shapedRecipe.getHeight(); ++j) {
+        for (int i = 0; i <= 3 - shapedRecipe.getWidth(); ++i) {
+            for (int j = 0; j <= 3 - shapedRecipe.getHeight(); ++j) {
                 if (this.matchesSmall(this, i, j, true, shapedRecipe)) {
                     return true;
                 }
@@ -365,8 +383,8 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     private boolean matchesSmall(Inventory inv, int offsetX, int offsetY, boolean bl, ShapedRecipe recipe) {
-        for(int i = 0; i < 3; ++i) {
-            for(int j = 0; j < 3; ++j) {
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
                 int k = i - offsetX;
                 int l = j - offsetY;
                 Ingredient ingredient = Ingredient.EMPTY;
@@ -378,7 +396,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
                     }
                 }
 
-                if (!ingredient.test(inv.getStack(i + j * 3))) {
+                if (!ingredient.test(inv.getStack(i + j * 3 + 1))) {
                     return false;
                 }
             }
