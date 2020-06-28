@@ -1,14 +1,13 @@
 package vanillaautomated.gui;
 
-import io.github.cottonmc.cotton.gui.CottonCraftingController;
+import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.Alignment;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -17,15 +16,16 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import vanillaautomated.VanillaAutomated;
+import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.CrafterBlockEntity;
 
 import java.util.ArrayList;
 
-public class CrafterBlockController extends CottonCraftingController {
+public class CrafterBlockController extends SyncedGuiDescription {
     public ArrayList<WItemSprite> itemSprites = new ArrayList<WItemSprite>();
 
     public CrafterBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title, BlockPos blockPos, String recipeItems) {
-        super(RecipeType.SMELTING, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+        super(VanillaAutomatedBlocks.crafterBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         String[] itemStrings = recipeItems.split(",");
 
@@ -37,7 +37,7 @@ public class CrafterBlockController extends CottonCraftingController {
         machinePanel.setSize(9, 3);
 
         WLabel label = new WLabel(title);
-        label.setAlignment(Alignment.CENTER);
+        label.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(label, 0, 0, 160, 10);
 
         WBar fire = new WBar(VanillaAutomated.flames_background, VanillaAutomated.flames, 0, 2, WBar.Direction.UP);

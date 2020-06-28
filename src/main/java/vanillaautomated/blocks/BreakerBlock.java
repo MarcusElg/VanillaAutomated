@@ -55,7 +55,7 @@ public class BreakerBlock extends MachineBlock {
     }
 
     @Override
-    public void onBlockRemoved(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof BreakerBlockEntity) {
@@ -64,7 +64,7 @@ public class BreakerBlock extends MachineBlock {
             }
         }
 
-        super.onBlockRemoved(state, world, pos, newState, notify);
+        super.onStateReplaced(state, world, pos, newState, notify);
     }
 
     @Override
@@ -72,11 +72,8 @@ public class BreakerBlock extends MachineBlock {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof BreakerBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "breaker_block"), player, (packetByteBuf -> {
-                packetByteBuf.writeBlockPos(pos);
-                packetByteBuf.writeText(((BreakerBlockEntity) be).getDisplayName());
-            } ));
-            player.incrementStat(VanillaAutomatedBlocks.interact_with_breaker);
+            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+            player.incrementStat(VanillaAutomatedBlocks.interactWithBreaker);
         }
 
         return ActionResult.SUCCESS;

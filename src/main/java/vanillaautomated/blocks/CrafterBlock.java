@@ -40,7 +40,7 @@ public class CrafterBlock extends MachineBlock {
     }
 
     @Override
-    public void onBlockRemoved(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof CrafterBlockEntity) {
@@ -49,7 +49,7 @@ public class CrafterBlock extends MachineBlock {
             }
         }
 
-        super.onBlockRemoved(state, world, pos, newState, notify);
+        super.onStateReplaced(state, world, pos, newState, notify);
     }
 
     @Override
@@ -57,12 +57,8 @@ public class CrafterBlock extends MachineBlock {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof CrafterBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "crafter_block"), player, (packetByteBuf -> {
-                packetByteBuf.writeBlockPos(pos);
-                packetByteBuf.writeText(((CrafterBlockEntity) be).getDisplayName());
-                packetByteBuf.writeString(((CrafterBlockEntity)be).getRecipeItems().toString().replace(" ", "").replace("[", "").replace("]", ""));
-            } ));
-            player.incrementStat(VanillaAutomatedBlocks.interact_with_crafter);
+            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+            player.incrementStat(VanillaAutomatedBlocks.interactWithCrafter);
         }
 
         return ActionResult.SUCCESS;

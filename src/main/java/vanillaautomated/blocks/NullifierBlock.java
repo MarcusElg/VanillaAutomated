@@ -35,7 +35,7 @@ public class NullifierBlock extends BlockWithEntity {
     }
 
     @Override
-    public void onBlockRemoved(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof NullifierBlockEntity) {
@@ -43,7 +43,7 @@ public class NullifierBlock extends BlockWithEntity {
             }
         }
 
-        super.onBlockRemoved(state, world, pos, newState, notify);
+        super.onStateReplaced(state, world, pos, newState, notify);
     }
 
     @Override
@@ -51,11 +51,8 @@ public class NullifierBlock extends BlockWithEntity {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof NullifierBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "nullifier"), player, (packetByteBuf -> {
-                packetByteBuf.writeBlockPos(pos);
-                packetByteBuf.writeText(((NullifierBlockEntity) be).getDisplayName());
-            } ));
-            player.incrementStat(VanillaAutomatedBlocks.interact_with_nullifier);
+            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+            player.incrementStat(VanillaAutomatedBlocks.interactWithNullifier);
         }
 
         return ActionResult.SUCCESS;

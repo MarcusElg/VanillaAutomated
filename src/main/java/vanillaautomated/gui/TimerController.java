@@ -1,27 +1,26 @@
 package vanillaautomated.gui;
 
-import io.github.cottonmc.cotton.gui.CottonCraftingController;
+import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.Alignment;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import vanillaautomated.VanillaAutomated;
-import vanillaautomated.blockentities.TimerBlockEntity;
+import vanillaautomated.VanillaAutomatedBlocks;
 
-public class TimerController extends CottonCraftingController {
+public class TimerController extends SyncedGuiDescription {
     private int time;
     private WLabel speedLabel;
 
     public TimerController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title, BlockPos blockPos, int currentTime) {
-        super(RecipeType.SMELTING, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+        super(VanillaAutomatedBlocks.timerBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         time = currentTime;
 
@@ -30,17 +29,17 @@ public class TimerController extends CottonCraftingController {
         setRootPanel(root);
 
         WLabel label = new WLabel(title);
-        label.setAlignment(Alignment.CENTER);
+        label.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(label, 0, 0, 160, 10);
 
         int rowHeight = 25;
 
         WLabel speedTitle = new WLabel(new TranslatableText("vanillaautomated.container.timer.speed"));
-        speedTitle.setAlignment(Alignment.CENTER);
+        speedTitle.setHorizontalAlignment(HorizontalAlignment.CENTER);
         root.add(speedTitle, 0, 15, 160, 10);
 
         speedLabel = new WLabel(time + "");
-        speedLabel.setAlignment(Alignment.CENTER);
+        speedLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
         speedLabel.setSize(160, 30);
         root.add(speedLabel, 72, rowHeight + 5);
 

@@ -1,23 +1,18 @@
 package vanillaautomated.gui;
 
-import io.github.cottonmc.cotton.gui.CottonCraftingController;
+import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.Alignment;
-import net.minecraft.block.entity.BlockEntity;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Nameable;
 import vanillaautomated.VanillaAutomated;
+import vanillaautomated.VanillaAutomatedBlocks;
 
-import java.util.logging.Logger;
-
-public class FisherBlockController extends CottonCraftingController {
-    public FisherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
-        super(RecipeType.SMELTING, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+public class FisherBlockController extends SyncedGuiDescription {
+    public FisherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+        super(VanillaAutomatedBlocks.fisherBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         WMaxedPanel root = new WMaxedPanel();
         root.setSize(160, 150);
@@ -25,10 +20,6 @@ public class FisherBlockController extends CottonCraftingController {
 
         WGridPanel machinePanel = new WGridPanel();
         machinePanel.setSize(9, 3);
-
-        WLabel label = new WLabel(title);
-        label.setAlignment(Alignment.CENTER);
-        root.add(label, 0, 0, 160, 10);
 
         WBar fire = new WBar(VanillaAutomated.flames_background, VanillaAutomated.flames, 0, 2, WBar.Direction.UP);
         machinePanel.add(fire, 2, 1);
@@ -50,11 +41,7 @@ public class FisherBlockController extends CottonCraftingController {
 
         root.add(machinePanel, 0, 10);
 
-        WLabel inventoryLabel = new WLabel(new TranslatableText("container.inventory"));
-        inventoryLabel.setSize(256, 10);
-
-        root.add(inventoryLabel, 0, 64);
-        root.add(this.createPlayerInventoryPanel(), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 0, 74);
         root.validate(this);
     }
 }

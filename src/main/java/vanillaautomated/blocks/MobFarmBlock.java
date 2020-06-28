@@ -40,7 +40,7 @@ public class MobFarmBlock extends MachineBlock {
     }
 
     @Override
-    public void onBlockRemoved(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof MobFarmBlockEntity) {
@@ -49,7 +49,7 @@ public class MobFarmBlock extends MachineBlock {
             }
         }
 
-        super.onBlockRemoved(state, world, pos, newState, notify);
+        super.onStateReplaced(state, world, pos, newState, notify);
     }
 
     @Override
@@ -57,11 +57,8 @@ public class MobFarmBlock extends MachineBlock {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof MobFarmBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "mob_farm_block"), player, (packetByteBuf -> {
-                packetByteBuf.writeBlockPos(pos);
-                packetByteBuf.writeText(((MobFarmBlockEntity) be).getDisplayName());
-            } ));
-            player.incrementStat(VanillaAutomatedBlocks.interact_with_mob_farm);
+            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+            player.incrementStat(VanillaAutomatedBlocks.interactWithMobFarm);
         }
 
         return ActionResult.SUCCESS;

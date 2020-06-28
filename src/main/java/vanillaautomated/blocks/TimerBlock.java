@@ -52,7 +52,7 @@ public class TimerBlock extends BlockWithEntity {
     }
 
     @Override
-    public void onBlockRemoved(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean notify) {
         if (!state.isOf(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof TimerBlockEntity) {
@@ -60,7 +60,7 @@ public class TimerBlock extends BlockWithEntity {
             }
         }
 
-        super.onBlockRemoved(state, world, pos, newState, notify);
+        super.onStateReplaced(state, world, pos, newState, notify);
     }
 
     @Override
@@ -68,12 +68,8 @@ public class TimerBlock extends BlockWithEntity {
         if (world.isClient) return ActionResult.PASS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof TimerBlockEntity) {
-            ContainerProviderRegistry.INSTANCE.openContainer(new Identifier(VanillaAutomated.prefix, "timer"), player, (packetByteBuf -> {
-                packetByteBuf.writeBlockPos(pos);
-                packetByteBuf.writeText(((TimerBlockEntity) be).getDisplayName());
-                packetByteBuf.writeInt(((TimerBlockEntity)be).getTime());
-            } ));
-            player.incrementStat(VanillaAutomatedBlocks.interact_with_timer);
+            player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
+            player.incrementStat(VanillaAutomatedBlocks.interactWithTimer);
         }
 
         return ActionResult.SUCCESS;

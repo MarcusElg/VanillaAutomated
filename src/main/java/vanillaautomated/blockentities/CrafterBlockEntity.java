@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
@@ -19,7 +20,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.recipe.*;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -33,11 +37,12 @@ import net.minecraft.util.registry.Registry;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.CrafterBlockController;
+import vanillaautomated.gui.FisherBlockController;
 
 import java.util.Collection;
 import java.util.Random;
 
-public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder {
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     DefaultedList<Item> recipeItems = DefaultedList.ofSize(9, Items.AIR);
@@ -497,4 +502,5 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     protected Text getContainerName() {
         return new TranslatableText("block." + VanillaAutomated.prefix + ".crafter_block");
     }
+
 }

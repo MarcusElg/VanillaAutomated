@@ -25,7 +25,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class MobNetItem extends Item {
 
@@ -34,13 +33,13 @@ public class MobNetItem extends Item {
     }
 
     @Override
-    public boolean useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
+    public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
         if (stack.hasTag() && stack.getTag().contains("EntityId")) {
-            return false;
+            return ActionResult.PASS;
         }
 
         if (!(entity instanceof LivingEntity) || entity instanceof EnderDragonEntity || entity instanceof WitherEntity || entity instanceof PlayerEntity || entity instanceof FishEntity) {
-            return false;
+            return ActionResult.PASS;
         }
 
         // Capture mob
@@ -55,7 +54,7 @@ public class MobNetItem extends Item {
         stack.setTag(tag);
         user.setStackInHand(hand, stack);
         entity.remove();
-        return true;
+        return ActionResult.SUCCESS;
     }
 
     @Override

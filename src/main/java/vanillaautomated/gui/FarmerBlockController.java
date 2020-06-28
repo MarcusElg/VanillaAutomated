@@ -1,21 +1,21 @@
 package vanillaautomated.gui;
 
-import io.github.cottonmc.cotton.gui.CottonCraftingController;
+import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WBar;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
-import io.github.cottonmc.cotton.gui.widget.data.Alignment;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import vanillaautomated.VanillaAutomated;
+import vanillaautomated.VanillaAutomatedBlocks;
 
-public class FarmerBlockController extends CottonCraftingController {
-    public FarmerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title) {
-        super(VanillaAutomated.farmerRecipeType, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+public class FarmerBlockController extends SyncedGuiDescription {
+    public FarmerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+        super(VanillaAutomatedBlocks.farmerBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         WMaxedPanel root = new WMaxedPanel();
         root.setSize(160, 150);
@@ -23,10 +23,6 @@ public class FarmerBlockController extends CottonCraftingController {
 
         WGridPanel machinePanel = new WGridPanel();
         machinePanel.setSize(9, 3);
-
-        WLabel label = new WLabel(title);
-        label.setAlignment(Alignment.CENTER);
-        root.add(label, 0, 0, 160, 10);
 
         WItemSlot inputSlot = WItemSlot.of(blockInventory, 0);
         machinePanel.add(inputSlot, 3, 0);
@@ -48,11 +44,7 @@ public class FarmerBlockController extends CottonCraftingController {
 
         root.add(machinePanel, 0, 10);
 
-        WLabel inventoryLabel = new WLabel(new TranslatableText("container.inventory"));
-        inventoryLabel.setSize(256, 10);
-
-        root.add(inventoryLabel, 0, 64);
-        root.add(this.createPlayerInventoryPanel(), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 0, 74);
         root.validate(this);
     }
 }

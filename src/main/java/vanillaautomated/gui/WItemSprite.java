@@ -29,7 +29,7 @@ public class WItemSprite extends WWidget {
     }
 
     @Override
-    public void paintBackground(int x, int y) {
+    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
         renderGuiItemModel(itemStack, x, y, itemRenderer.getHeldItemModel(itemStack, (World)null, null));
     }
 
