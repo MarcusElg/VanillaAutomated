@@ -1,12 +1,10 @@
 package vanillaautomated.gui;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
-import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
+import io.github.cottonmc.cotton.gui.widget.WGridPanel;
+import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import vanillaautomated.VanillaAutomatedBlocks;
 
 public class NullifierController extends SyncedGuiDescription {

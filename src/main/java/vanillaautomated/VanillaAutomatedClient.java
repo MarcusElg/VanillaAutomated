@@ -2,13 +2,8 @@ package vanillaautomated;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 import vanillaautomated.gui.*;
 
 public class VanillaAutomatedClient implements ClientModInitializer {

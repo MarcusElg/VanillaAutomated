@@ -13,7 +13,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import vanillaautomated.blockentities.CrafterBlockEntity;
 import vanillaautomated.blockentities.TimerBlockEntity;
 import vanillaautomated.recipes.CrusherRecipe;
@@ -23,8 +22,6 @@ import vanillaautomated.recipes.FarmerRecipeSerializer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.logging.Logger;
 
 public class VanillaAutomated implements ModInitializer {
 

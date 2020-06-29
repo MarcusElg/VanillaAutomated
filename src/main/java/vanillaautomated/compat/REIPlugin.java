@@ -1,15 +1,10 @@
 package vanillaautomated.compat;
 
-import me.shedaniel.rei.api.EntryStack;
 import me.shedaniel.rei.api.RecipeHelper;
 import me.shedaniel.rei.api.plugins.REIPluginV0;
 import me.shedaniel.rei.plugin.cooking.DefaultCookingCategory;
-import me.shedaniel.rei.plugin.smelting.DefaultSmeltingDisplay;
 import net.minecraft.util.Identifier;
 import vanillaautomated.VanillaAutomated;
-import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.recipes.CrusherRecipe;
-import vanillaautomated.recipes.FarmerRecipe;
 
 public class REIPlugin implements REIPluginV0 {
 
