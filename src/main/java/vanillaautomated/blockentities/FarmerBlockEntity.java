@@ -27,16 +27,15 @@ import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.FarmerBlockController;
 import vanillaautomated.recipes.FarmerRecipe;
 
-import java.util.Random;
-
 public class FarmerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder {
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 2400; // 2 minutes // TODO: config file
-    private Random random = new Random();
+    public int speed = 2400;
+    public int setSpeed = 2400;
+    public int spedUpSpeed = 20;
     private final PropertyDelegate propertyDelegate;
     public boolean spedUp = false; // Used bonemeal
     private String recipeString = "null";
@@ -256,11 +255,11 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
     private void updateSpeed() {
         if (!spedUp) {
             if (!items.get(1).isEmpty()) {
-                speed = 20;
+                speed = spedUpSpeed;
                 items.get(1).decrement(1);
                 spedUp = true;
             } else {
-                speed = 2400;
+                speed = setSpeed;
                 spedUp = false;
             }
         }

@@ -40,7 +40,7 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 10; // TODO: config file
+    public int speed = 10;
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
 

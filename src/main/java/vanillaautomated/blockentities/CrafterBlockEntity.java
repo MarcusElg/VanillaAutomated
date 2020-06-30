@@ -3,6 +3,7 @@ package vanillaautomated.blockentities;
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -19,10 +20,12 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -37,17 +40,15 @@ import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.CrafterBlockController;
 
 import java.util.Collection;
-import java.util.Random;
 
-public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder {
+public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     DefaultedList<Item> recipeItems = DefaultedList.ofSize(9, Items.AIR);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 10; // TODO: config file
-    private Random random = new Random();
+    public int speed = 10;
     private final PropertyDelegate propertyDelegate;
     private String recipeString = "null";
     private CraftingRecipe currentRecipe = null;
@@ -106,7 +107,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     public void resetRecipe() {
-        recipeItems.clear();
+        recipeItems = DefaultedList.ofSize(9, Items.AIR);
         ItemScatterer.spawn(world, pos, this);
         items.clear();
     }
@@ -153,11 +154,9 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         if (slot > 0 && slot < 10 && stack.getItem() != Items.AIR) {
             recipeItems.set(slot - 1, stack.getItem());
 
-            if (world.isClient) {
+            if (!world.isClient) {
                 Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-                if (currentScreen == null || !(currentScreen instanceof ScreenHandlerProvider)) {
-
-                } else {
+                if (currentScreen != null && currentScreen instanceof ScreenHandlerProvider) {
                     ((CrafterBlockController) ((ScreenHandlerProvider) currentScreen).getScreenHandler()).itemSprites.get(slot - 1).setItem(new ItemStack(stack.getItem(), 1));
                 }
             }
@@ -449,7 +448,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
     public int[] getAvailableSlots(Direction side) {
         if (side == Direction.DOWN) {
-            return new int[]{11};
+            return new int[]{10};
         } else if (side == Direction.UP) {
             return new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
         } else {
@@ -473,7 +472,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
             if (item != Items.WATER_BUCKET && item != Items.BUCKET) {
                 return false;
             }
-        } else if (slot == 11) {
+        } else if (slot == 10) {
             return true;
         }
 
@@ -502,7 +501,12 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
-        return new CrafterBlockController(syncId, inventory, ScreenHandlerContext.create(world, pos), pos, recipeString);
+        return new CrafterBlockController(syncId, inventory, ScreenHandlerContext.create(world, pos), pos, getRecipeItems().toString().replace(" ", "").replace("[", "").replace("]", ""));
     }
 
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
+        packetByteBuf.writeBlockPos(pos);
+        packetByteBuf.writeString(getRecipeItems().toString().replace(" ", "").replace("[", "").replace("]", ""));
+    }
 }

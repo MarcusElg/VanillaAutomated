@@ -23,6 +23,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.FisherBlockEntity;
 
@@ -44,12 +45,18 @@ public class FisherBlock extends MachineBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof FisherBlockEntity) {
-                ((FisherBlockEntity) blockEntity).setCustomName(itemStack.getName());
-            }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof FisherBlockEntity)) {
+            return;
         }
+
+        if (itemStack.hasCustomName()) {
+            ((FisherBlockEntity) blockEntity).setCustomName(itemStack.getName());
+        }
+
+        ((FisherBlockEntity) blockEntity).speed = VanillaAutomated.config.fisherTime;
+
+        checkForWater(world, state, pos);
     }
 
     @Override
@@ -86,6 +93,12 @@ public class FisherBlock extends MachineBlock {
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
+        checkForWater(world, state, pos);
+
+        return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
+    }
+
+    private void checkForWater (WorldAccess world, BlockState state, BlockPos pos) {
         FisherBlockEntity blockEntity = (FisherBlockEntity)world.getBlockEntity(pos);
         Direction direction1 = (Direction) state.get(FACING);
         pos = new BlockPos(pos.getX() + direction1.getOffsetX(), pos.getY() + direction1.getOffsetY(), pos.getZ() + direction1.getOffsetZ());
@@ -95,8 +108,6 @@ public class FisherBlock extends MachineBlock {
         } else {
             blockEntity.hasWater = false;
         }
-
-        return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
     }
 
     @Override

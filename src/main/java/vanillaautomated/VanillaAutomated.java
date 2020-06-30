@@ -1,6 +1,8 @@
 package vanillaautomated;
 
 import com.google.gson.Gson;
+import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -15,6 +17,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import vanillaautomated.blockentities.CrafterBlockEntity;
 import vanillaautomated.blockentities.TimerBlockEntity;
+import vanillaautomated.config.VanillaAutomatedConfig;
 import vanillaautomated.recipes.CrusherRecipe;
 import vanillaautomated.recipes.CrusherRecipeSerializer;
 import vanillaautomated.recipes.FarmerRecipe;
@@ -42,13 +45,18 @@ public class VanillaAutomated implements ModInitializer {
     public static RecipeType farmerRecipeType;
     public static RecipeType crusherRecipeType;
 
+    public static VanillaAutomatedConfig config;
+
     // Vanilla stuff
     public static final Gson gson = new Gson();
-
     public static ArrayList<CraftingRecipe> craftingRecipes;
 
     @Override
     public void onInitialize() {
+        // Config
+        AutoConfig.register(VanillaAutomatedConfig.class, JanksonConfigSerializer::new);
+        config = AutoConfig.getConfigHolder(VanillaAutomatedConfig.class).getConfig();
+
         VanillaAutomatedBlocks.register();
         VanillaAutomatedItems.register();
 

@@ -36,7 +36,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 200; // TODO: config file
+    public int speed = 200; // TODO: config file
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
     private String recipeString = "null";

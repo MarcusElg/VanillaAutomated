@@ -40,7 +40,7 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 200; // TODO: config file
+    public int speed = 200;
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
     public boolean hasWater = false;

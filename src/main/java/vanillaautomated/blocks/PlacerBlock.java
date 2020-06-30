@@ -21,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.PlacerBlockEntity;
 
@@ -42,12 +43,16 @@ public class PlacerBlock extends MachineBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof PlacerBlockEntity) {
-                ((PlacerBlockEntity) blockEntity).setCustomName(itemStack.getName());
-            }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof PlacerBlockEntity)) {
+            return;
         }
+
+        if (itemStack.hasCustomName()) {
+            ((PlacerBlockEntity) blockEntity).setCustomName(itemStack.getName());
+        }
+
+        ((PlacerBlockEntity) blockEntity).speed = VanillaAutomated.config.placerTime;
     }
 
     @Override

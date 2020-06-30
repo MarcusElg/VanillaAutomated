@@ -4,6 +4,7 @@ import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WBar;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
+import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerContext;
 import vanillaautomated.VanillaAutomated;
@@ -11,9 +12,9 @@ import vanillaautomated.VanillaAutomatedBlocks;
 
 public class FarmerBlockController extends SyncedGuiDescription {
     public FarmerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
-        super(VanillaAutomatedBlocks.farmerBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+        super(VanillaAutomatedBlocks.farmerBlockScreen, syncId, playerInventory, getBlockInventory(context, 4), getBlockPropertyDelegate(context, 4));
 
-        WMaxedPanel root = new WMaxedPanel();
+        WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);
 

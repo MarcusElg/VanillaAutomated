@@ -15,11 +15,11 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class CobblestoneGeneratorBlock extends MachineBlock {
 
@@ -34,12 +34,16 @@ public class CobblestoneGeneratorBlock extends MachineBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CobblestoneGeneratorBlockEntity) {
-                ((CobblestoneGeneratorBlockEntity) blockEntity).setCustomName(itemStack.getName());
-            }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof CobblestoneGeneratorBlockEntity)) {
+            return;
         }
+
+        if (itemStack.hasCustomName()) {
+            ((CobblestoneGeneratorBlockEntity) blockEntity).setCustomName(itemStack.getName());
+        }
+
+        ((CobblestoneGeneratorBlockEntity) blockEntity).speed = VanillaAutomated.config.cobblestoneGeneratorTime;
     }
 
     @Override
@@ -60,8 +64,6 @@ public class CobblestoneGeneratorBlock extends MachineBlock {
         if (world.isClient) return ActionResult.SUCCESS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof CobblestoneGeneratorBlockEntity) {
-            Logger.getAnonymousLogger().warning("TEST");
-            Logger.getAnonymousLogger().warning(state.createScreenHandlerFactory(world, pos) + "");
             player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
             player.incrementStat(VanillaAutomatedBlocks.interactWithCobblestoneGenerator);
         }

@@ -15,6 +15,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.CrusherBlockEntity;
 
@@ -32,12 +33,16 @@ public class CrusherBlock extends MachineBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CrusherBlockEntity) {
-                ((CrusherBlockEntity) blockEntity).setCustomName(itemStack.getName());
-            }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof CrusherBlockEntity)) {
+            return;
         }
+
+        if (itemStack.hasCustomName()) {
+            ((CrusherBlockEntity) blockEntity).setCustomName(itemStack.getName());
+        }
+
+        ((CrusherBlockEntity) blockEntity).speed = VanillaAutomated.config.crusherTime;
     }
 
     @Override

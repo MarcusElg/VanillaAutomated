@@ -1,11 +1,14 @@
 package vanillaautomated.blockentities;
 
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -15,7 +18,7 @@ import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.TimerController;
 
-public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Tickable {
+public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Tickable, ExtendedScreenHandlerFactory {
     private int currentTime = 0;
     private int time = 20;
     private boolean disabled = false;
@@ -80,5 +83,11 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ti
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
         return new TimerController(syncId, inventory, ScreenHandlerContext.create(world, pos), pos, time);
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
+        packetByteBuf.writeBlockPos(pos);
+        packetByteBuf.writeInt(time);
     }
 }

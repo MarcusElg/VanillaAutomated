@@ -3,15 +3,16 @@ package vanillaautomated.gui;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
+import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerContext;
 import vanillaautomated.VanillaAutomatedBlocks;
 
 public class NullifierController extends SyncedGuiDescription {
     public NullifierController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
-        super(VanillaAutomatedBlocks.nullifierBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+        super(VanillaAutomatedBlocks.nullifierBlockScreen, syncId, playerInventory, getBlockInventory(context, 1), getBlockPropertyDelegate(context, 0));
 
-        WMaxedPanel root = new WMaxedPanel();
+        WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);
 

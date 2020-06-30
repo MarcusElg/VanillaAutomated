@@ -3,6 +3,7 @@ package vanillaautomated.gui;
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.WButton;
 import io.github.cottonmc.cotton.gui.widget.WLabel;
+import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
 import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
@@ -20,11 +21,11 @@ public class TimerController extends SyncedGuiDescription {
     private WLabel speedLabel;
 
     public TimerController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, BlockPos blockPos, int currentTime) {
-        super(VanillaAutomatedBlocks.timerBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+        super(VanillaAutomatedBlocks.timerBlockScreen, syncId, playerInventory, getBlockInventory(context, 0), getBlockPropertyDelegate(context, 0));
 
         time = currentTime;
 
-        WMaxedPanel root = new WMaxedPanel();
+        WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);
 

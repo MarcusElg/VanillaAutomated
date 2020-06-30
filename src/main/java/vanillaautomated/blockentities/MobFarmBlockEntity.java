@@ -43,7 +43,7 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    private int speed = 400; // TODO: config file
+    public int speed = 400;
     private Random random = new Random();
     private final PropertyDelegate propertyDelegate;
     private String entityType = "";

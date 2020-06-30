@@ -16,6 +16,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.MobFarmBlockEntity;
 
@@ -28,12 +29,16 @@ public class MobFarmBlock extends MachineBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof MobFarmBlockEntity) {
-                ((MobFarmBlockEntity) blockEntity).setCustomName(itemStack.getName());
-            }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof MobFarmBlockEntity)) {
+            return;
         }
+
+        if (itemStack.hasCustomName()) {
+            ((MobFarmBlockEntity) blockEntity).setCustomName(itemStack.getName());
+        }
+
+        ((MobFarmBlockEntity) blockEntity).speed = VanillaAutomated.config.mobFarmTime;
     }
 
     @Override

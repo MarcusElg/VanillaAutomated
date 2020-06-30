@@ -16,6 +16,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.CrafterBlockEntity;
 
@@ -28,12 +29,16 @@ public class CrafterBlock extends MachineBlock {
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CrafterBlockEntity) {
-                ((CrafterBlockEntity) blockEntity).setCustomName(itemStack.getName());
-            }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!(blockEntity instanceof CrafterBlockEntity)) {
+            return;
         }
+
+        if (itemStack.hasCustomName()) {
+            ((CrafterBlockEntity) blockEntity).setCustomName(itemStack.getName());
+        }
+
+        ((CrafterBlockEntity) blockEntity).speed = VanillaAutomated.config.crafterTime;
     }
 
     @Override
@@ -76,5 +81,4 @@ public class CrafterBlock extends MachineBlock {
             super.particles(state, world, pos, random);
         }
     }
-
 }

@@ -1,10 +1,7 @@
 package vanillaautomated.gui;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
-import io.github.cottonmc.cotton.gui.widget.WBar;
-import io.github.cottonmc.cotton.gui.widget.WButton;
-import io.github.cottonmc.cotton.gui.widget.WGridPanel;
-import io.github.cottonmc.cotton.gui.widget.WItemSlot;
+import io.github.cottonmc.cotton.gui.widget.*;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.entity.player.PlayerInventory;
@@ -25,11 +22,11 @@ public class CrafterBlockController extends SyncedGuiDescription {
     public ArrayList<WItemSprite> itemSprites = new ArrayList<WItemSprite>();
 
     public CrafterBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, BlockPos blockPos, String recipeItems) {
-        super(VanillaAutomatedBlocks.crafterBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
+        super(VanillaAutomatedBlocks.crafterBlockScreen, syncId, playerInventory, getBlockInventory(context, 11), getBlockPropertyDelegate(context, 4));
 
         String[] itemStrings = recipeItems.split(",");
 
-        WMaxedPanel root = new WMaxedPanel();
+        WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);
 
