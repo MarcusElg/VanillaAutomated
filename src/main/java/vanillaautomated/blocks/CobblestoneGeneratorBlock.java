@@ -19,6 +19,7 @@ import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class CobblestoneGeneratorBlock extends MachineBlock {
 
@@ -56,9 +57,11 @@ public class CobblestoneGeneratorBlock extends MachineBlock {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.PASS;
+        if (world.isClient) return ActionResult.SUCCESS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof CobblestoneGeneratorBlockEntity) {
+            Logger.getAnonymousLogger().warning("TEST");
+            Logger.getAnonymousLogger().warning(state.createScreenHandlerFactory(world, pos) + "");
             player.openHandledScreen(state.createScreenHandlerFactory(world, pos));
             player.incrementStat(VanillaAutomatedBlocks.interactWithCobblestoneGenerator);
         }

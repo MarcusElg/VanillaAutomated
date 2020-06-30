@@ -1,8 +1,10 @@
 package vanillaautomated.gui;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
-import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
+import io.github.cottonmc.cotton.gui.widget.WBar;
+import io.github.cottonmc.cotton.gui.widget.WButton;
+import io.github.cottonmc.cotton.gui.widget.WGridPanel;
+import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.entity.player.PlayerInventory;
@@ -10,8 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class CrafterBlockController extends SyncedGuiDescription {
     public ArrayList<WItemSprite> itemSprites = new ArrayList<WItemSprite>();
 
-    public CrafterBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title, BlockPos blockPos, String recipeItems) {
+    public CrafterBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, BlockPos blockPos, String recipeItems) {
         super(VanillaAutomatedBlocks.crafterBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         String[] itemStrings = recipeItems.split(",");
@@ -35,10 +35,6 @@ public class CrafterBlockController extends SyncedGuiDescription {
 
         WGridPanel machinePanel = new WGridPanel();
         machinePanel.setSize(9, 3);
-
-        WLabel label = new WLabel(title);
-        label.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        root.add(label, 0, 0, 160, 10);
 
         WBar fire = new WBar(VanillaAutomated.flames_background, VanillaAutomated.flames, 0, 2, WBar.Direction.UP);
         machinePanel.add(fire, 1, 1);
@@ -75,11 +71,7 @@ public class CrafterBlockController extends SyncedGuiDescription {
 
         root.add(machinePanel, 0, 10);
 
-        WLabel inventoryLabel = new WLabel(new TranslatableText("container.inventory"));
-        inventoryLabel.setSize(256, 10);
-
-        root.add(inventoryLabel, 0, 64);
-        root.add(this.createPlayerInventoryPanel(), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 0, 74);
         root.validate(this);
     }
 

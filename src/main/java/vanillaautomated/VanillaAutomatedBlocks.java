@@ -108,13 +108,13 @@ public class VanillaAutomatedBlocks {
         fisherBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "fisher_block"), (syncId, inventory) -> new FisherBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
         cobblestoneGeneratorBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), (syncId, inventory) -> new CobblestoneGeneratorBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
         nullifierBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "nullifier_block"), (syncId, inventory) -> new NullifierController(syncId, inventory, ScreenHandlerContext.EMPTY));
-        timerBlockScreen = ScreenHandlerRegistry.registerExtended(new Identifier(VanillaAutomated.prefix, "timer_block"), (syncId, inventory, buf) -> new TimerController(syncId, inventory, ScreenHandlerContext.EMPTY, buf.readText(), buf.readBlockPos(), buf.readInt()));
+        timerBlockScreen = ScreenHandlerRegistry.registerExtended(new Identifier(VanillaAutomated.prefix, "timer_block"), (syncId, inventory, buf) -> new TimerController(syncId, inventory, ScreenHandlerContext.EMPTY, buf.readBlockPos(), buf.readInt()));
         mobFarmBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "mob_farm_block"), (syncId, inventory) -> new MobFarmBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
         farmerBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "farmer_block"), (syncId, inventory) -> new FarmerBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
         crusherBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "crusher_block"), (syncId, inventory) -> new CrusherBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
         breakerBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "breaker_block"), (syncId, inventory) -> new BreakerBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
         placerBlockScreen = ScreenHandlerRegistry.registerSimple(new Identifier(VanillaAutomated.prefix, "placer_block"), (syncId, inventory) -> new PlacerBlockController(syncId, inventory, ScreenHandlerContext.EMPTY));
-        crafterBlockScreen = ScreenHandlerRegistry.registerExtended(new Identifier(VanillaAutomated.prefix, "crafter_block"), (syncId, inventory, buf) -> new CrafterBlockController(syncId, inventory, ScreenHandlerContext.EMPTY, buf.readText(), buf.readBlockPos(), buf.readString()));
+        crafterBlockScreen = ScreenHandlerRegistry.registerExtended(new Identifier(VanillaAutomated.prefix, "crafter_block"), (syncId, inventory, buf) -> new CrafterBlockController(syncId, inventory, ScreenHandlerContext.EMPTY, buf.readBlockPos(), buf.readString()));
 
         // Stats
         interactWithFisher = registerStat("interact_with_fisher");

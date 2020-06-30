@@ -51,7 +51,7 @@ public class CrafterBlock extends MachineBlock {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.PASS;
+        if (world.isClient) return ActionResult.SUCCESS;
         BlockEntity be = world.getBlockEntity(pos);
         if (be != null && be instanceof CrafterBlockEntity) {
             player.openHandledScreen(state.createScreenHandlerFactory(world, pos));

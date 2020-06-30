@@ -7,6 +7,7 @@ import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
@@ -18,6 +19,8 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
@@ -29,6 +32,7 @@ import net.minecraft.util.math.Direction;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.VanillaAutomatedItems;
+import vanillaautomated.gui.MobFarmBlockController;
 
 import java.util.List;
 import java.util.Random;
@@ -355,5 +359,10 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
     @Override
     protected Text getContainerName() {
         return new TranslatableText("block." + VanillaAutomated.prefix + ".mob_farm_block");
+    }
+
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
+        return new MobFarmBlockController(syncId, inventory, ScreenHandlerContext.create(world, pos));
     }
 }

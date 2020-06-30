@@ -1,7 +1,11 @@
 package vanillaautomated.blockentities;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -9,6 +13,7 @@ import net.minecraft.util.Nameable;
 import net.minecraft.util.Tickable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+import vanillaautomated.gui.TimerController;
 
 public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Tickable {
     private int currentTime = 0;
@@ -70,5 +75,10 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ti
             world.setBlockState(pos, VanillaAutomatedBlocks.timerBlock.getDefaultState().with(Properties.ENABLED, false));
             disabled = true;
         }
+    }
+
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
+        return new TimerController(syncId, inventory, ScreenHandlerContext.create(world, pos), pos, time);
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import vanillaautomated.VanillaAutomated;
@@ -20,7 +19,7 @@ public class TimerController extends SyncedGuiDescription {
     private int time;
     private WLabel speedLabel;
 
-    public TimerController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, Text title, BlockPos blockPos, int currentTime) {
+    public TimerController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, BlockPos blockPos, int currentTime) {
         super(VanillaAutomatedBlocks.timerBlockScreen, syncId, playerInventory, getBlockInventory(context), getBlockPropertyDelegate(context));
 
         time = currentTime;
@@ -28,10 +27,6 @@ public class TimerController extends SyncedGuiDescription {
         WMaxedPanel root = new WMaxedPanel();
         root.setSize(160, 150);
         setRootPanel(root);
-
-        WLabel label = new WLabel(title);
-        label.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        root.add(label, 0, 0, 160, 10);
 
         int rowHeight = 25;
 
@@ -80,11 +75,7 @@ public class TimerController extends SyncedGuiDescription {
         });
         root.add(speedButton, 117, rowHeight, 27, 18);
 
-        WLabel inventoryLabel = new WLabel(new TranslatableText("container.inventory"));
-        inventoryLabel.setSize(256, 10);
-
-        root.add(inventoryLabel, 0, 64);
-        root.add(this.createPlayerInventoryPanel(), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 0, 74);
         root.validate(this);
     }
 
