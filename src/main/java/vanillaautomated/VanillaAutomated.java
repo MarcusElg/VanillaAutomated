@@ -35,8 +35,10 @@ public class VanillaAutomated implements ModInitializer {
     public static Identifier progress_background = new Identifier(prefix, "textures/gui/progress_background.png");
     public static Identifier bucket_slot = new Identifier(prefix, "textures/gui/bucket_slot.png");
     public static Identifier tool_slot = new Identifier(prefix, "textures/gui/tool_slot.png");
+
     public static Identifier timer_configuration_packet = new Identifier(prefix, "timer_configuration");
     public static Identifier crafter_reset_packet = new Identifier(prefix, "crafter_reset");
+    public static Identifier update_crafter_gui_packet = new Identifier(prefix, "crafter_update_gui");
 
     public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(
             new Identifier(prefix, "machines"),
@@ -96,14 +98,14 @@ public class VanillaAutomated implements ModInitializer {
         });
     }
 
-    public static Collection<CraftingRecipe> getOrCreateCraftingRecipes (World world) {
+    public static Collection<CraftingRecipe> getOrCreateCraftingRecipes(World world) {
         if (craftingRecipes == null) {
             Collection<Recipe<?>> allRecipes = world.getRecipeManager().values();
 
             craftingRecipes = new ArrayList<CraftingRecipe>();
             for (Recipe recipe : allRecipes) {
                 if (recipe.getType() == RecipeType.CRAFTING) {
-                    craftingRecipes.add((CraftingRecipe)recipe);
+                    craftingRecipes.add((CraftingRecipe) recipe);
                 }
             }
         }

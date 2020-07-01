@@ -2,7 +2,9 @@ package vanillaautomated.blockentities;
 
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
+import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
@@ -40,6 +42,7 @@ import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.CrafterBlockController;
 
 import java.util.Collection;
+import java.util.List;
 
 public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
 
@@ -112,7 +115,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         items.clear();
     }
 
-    public void resetRecipeClient () {
+    public void resetRecipeClient() {
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
         if (currentScreen == null || !(currentScreen instanceof ScreenHandlerProvider)) {
 
@@ -154,10 +157,18 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         if (slot > 0 && slot < 10 && stack.getItem() != Items.AIR) {
             recipeItems.set(slot - 1, stack.getItem());
 
-            if (!world.isClient) {
-                Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-                if (currentScreen != null && currentScreen instanceof ScreenHandlerProvider) {
-                    ((CrafterBlockController) ((ScreenHandlerProvider) currentScreen).getScreenHandler()).itemSprites.get(slot - 1).setItem(new ItemStack(stack.getItem(), 1));
+            List<? extends PlayerEntity> players = world.getPlayers();
+            for (int i = 0; i < players.size(); i++) {
+                if (players.get(i).currentScreenHandler != null && players.get(i).currentScreenHandler instanceof CrafterBlockController) {
+                    // Server side
+                    CrafterBlockController controller = (CrafterBlockController) players.get(i).currentScreenHandler;
+                    controller.itemSprites.get(slot - 1).setItem(new ItemStack(stack.getItem()));
+
+                    // Client side
+                    PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
+                    data.writeItemStack(stack);
+                    data.writeInt(slot - 1);
+                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(players.get(i), VanillaAutomated.update_crafter_gui_packet, data);
                 }
             }
         }
@@ -507,6 +518,15 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     @Override
     public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
         packetByteBuf.writeBlockPos(pos);
-        packetByteBuf.writeString(getRecipeItems().toString().replace(" ", "").replace("[", "").replace("]", ""));
+        StringBuilder items = new StringBuilder();
+        DefaultedList<Item> recipeItems = getRecipeItems();
+
+        for (int i = 0; i < 9; i++) {
+            items.append(Registry.ITEM.getId(recipeItems.get(i)).toString().replace(":", "."));
+            if (i < 8) {
+                items.append(",");
+            }
+        }
+        packetByteBuf.writeString(items.toString());
     }
 }

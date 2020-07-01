@@ -25,6 +25,7 @@ public class TimerController extends SyncedGuiDescription {
 
         time = currentTime;
 
+        setTitleAlignment(HorizontalAlignment.CENTER);
         WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);

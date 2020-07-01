@@ -2,6 +2,7 @@ package vanillaautomated.gui;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,6 +27,7 @@ public class CrafterBlockController extends SyncedGuiDescription {
 
         String[] itemStrings = recipeItems.split(",");
 
+        setTitleAlignment(HorizontalAlignment.CENTER);
         WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);
@@ -40,11 +42,12 @@ public class CrafterBlockController extends SyncedGuiDescription {
         machinePanel.add(fuelSlot, 1, 2);
 
         int lastSlotIndex = 1;
+        itemSprites.clear();
         for (int j = 0; j < 3; j++) {
             for (int i = 0; i < 3; i++) {
                 WItemSlot craftingSlot = WItemSlot.of(blockInventory, lastSlotIndex);
                 machinePanel.add(craftingSlot, i + 3, j);
-                WItemSprite item = new WItemSprite(new ItemStack(Registry.ITEM.get(Identifier.tryParse(itemStrings[i + j * 3])), 1));
+                WItemSprite item = new WItemSprite(new ItemStack(Registry.ITEM.get(new Identifier(itemStrings[i + j * 3].replace(".", ":"))), 1));
                 itemSprites.add(item);
                 machinePanel.add(item, i + 3, j);
                 lastSlotIndex++;

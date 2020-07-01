@@ -2,6 +2,7 @@ package vanillaautomated.gui;
 
 import io.github.cottonmc.cotton.gui.SyncedGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerContext;
 import vanillaautomated.VanillaAutomated;
@@ -11,6 +12,7 @@ public class BreakerBlockController extends SyncedGuiDescription {
     public BreakerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(VanillaAutomatedBlocks.breakerBlockScreen, syncId, playerInventory, getBlockInventory(context, 4), getBlockPropertyDelegate(context, 4));
 
+        setTitleAlignment(HorizontalAlignment.CENTER);
         WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);

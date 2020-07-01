@@ -3,7 +3,10 @@ package vanillaautomated;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import vanillaautomated.gui.*;
 
 public class VanillaAutomatedClient implements ClientModInitializer {
@@ -23,5 +26,20 @@ public class VanillaAutomatedClient implements ClientModInitializer {
 
         // Rendering
         BlockRenderLayerMap.INSTANCE.putBlock(VanillaAutomatedBlocks.timerBlock, RenderLayer.getCutout());
+
+        // Packets
+        registerCrafterGuiPacket();
+    }
+
+    private void registerCrafterGuiPacket() {
+        ClientSidePacketRegistry.INSTANCE.register(VanillaAutomated.update_crafter_gui_packet, (packetContext, attachedData) -> {
+            PlayerEntity player = packetContext.getPlayer();
+            ItemStack itemStack = attachedData.readItemStack();
+            int id = attachedData.readInt();
+            packetContext.getTaskQueue().execute(() -> {
+                CrafterBlockController controller = (CrafterBlockController) player.currentScreenHandler;
+                controller.itemSprites.get(id).setItem(new ItemStack(itemStack.getItem()));
+            });
+        });
     }
 }

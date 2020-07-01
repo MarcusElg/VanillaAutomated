@@ -28,6 +28,10 @@ public class WItemSprite extends WWidget {
         this.itemStack = itemStack;
     }
 
+    public ItemStack getItem () {
+        return itemStack;
+    }
+
     @Override
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
         renderGuiItemModel(itemStack, x + 1, y + 1, itemRenderer.getHeldItemModel(itemStack, (World)null, null));

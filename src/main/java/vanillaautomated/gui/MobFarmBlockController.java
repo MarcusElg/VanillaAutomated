@@ -5,6 +5,7 @@ import io.github.cottonmc.cotton.gui.widget.WBar;
 import io.github.cottonmc.cotton.gui.widget.WGridPanel;
 import io.github.cottonmc.cotton.gui.widget.WItemSlot;
 import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
+import io.github.cottonmc.cotton.gui.widget.data.HorizontalAlignment;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandlerContext;
 import vanillaautomated.VanillaAutomated;
@@ -14,6 +15,7 @@ public class MobFarmBlockController extends SyncedGuiDescription {
     public MobFarmBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(VanillaAutomatedBlocks.mobFarmBlockScreen, syncId, playerInventory, getBlockInventory(context, 11), getBlockPropertyDelegate(context, 4));
 
+        setTitleAlignment(HorizontalAlignment.CENTER);
         WPlainPanel root = new WPlainPanel();
         root.setSize(160, 150);
         setRootPanel(root);
