@@ -206,7 +206,7 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         }
 
         ItemStack itemStack = this.items.get(2);
-        if (this.canAcceptOutput(currentRecipe)) {
+        if (this.canAcceptOutput(currentRecipe) && !this.items.get(0).isEmpty()) {
             // Burn another item
             if (!this.isBurning()) {
                 if (!itemStack.isEmpty()) {

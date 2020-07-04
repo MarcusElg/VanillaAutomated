@@ -111,8 +111,10 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
     public void resetRecipe() {
         recipeItems = DefaultedList.ofSize(9, Items.AIR);
-        ItemScatterer.spawn(world, pos, this);
-        items.clear();
+        for(int i = 0; i < 9; ++i) {
+            ItemScatterer.spawn(world, getPos().getX(), getPos().getY(), getPos().getZ(), getStack(i + 1));
+            items.set(i + 1, ItemStack.EMPTY);
+        }
     }
 
     public void resetRecipeClient() {
@@ -269,11 +271,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
         if (this.isBurning()) {
             this.fuelTime--;
-        }
-
-        if (items.get(0).isEmpty()) {
-            this.processingTime = 0;
-            return;
         }
 
         // Freeze when powered

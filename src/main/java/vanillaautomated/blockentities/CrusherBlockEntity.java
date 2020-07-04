@@ -198,7 +198,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         }
 
         ItemStack itemStack = this.items.get(1);
-        if (this.canAcceptOutput(currentRecipe)) {
+        if (this.canAcceptOutput(currentRecipe) && !this.items.get(0).isEmpty()) {
             // Burn another item
             if (!this.isBurning()) {
                 if (!itemStack.isEmpty()) {
