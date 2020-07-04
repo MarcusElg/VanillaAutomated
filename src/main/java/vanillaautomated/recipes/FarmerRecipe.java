@@ -13,7 +13,7 @@ import vanillaautomated.VanillaAutomated;
 public class FarmerRecipe extends AbstractCookingRecipe {
 
     public FarmerRecipe (Ingredient ingredient, ItemStack output, Identifier id) {
-        super(VanillaAutomated.farmerRecipeType, id, null, ingredient, output, 0, 20);
+        super(VanillaAutomated.farmerRecipeType, id, "", ingredient, output, 0, 20);
     }
 
     @Override
