@@ -8,6 +8,8 @@ import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextType;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
@@ -43,6 +45,7 @@ public class VanillaAutomated implements ModInitializer {
     public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(
             new Identifier(prefix, "machines"),
             () -> new ItemStack(VanillaAutomatedBlocks.machineBlock));
+    public static LootContextType mobLootType;
 
     public static RecipeType farmerRecipeType;
     public static RecipeType crusherRecipeType;
@@ -61,6 +64,8 @@ public class VanillaAutomated implements ModInitializer {
 
         VanillaAutomatedBlocks.register();
         VanillaAutomatedItems.register();
+
+        mobLootType = new LootContextType.Builder().require(LootContextParameters.LAST_DAMAGE_PLAYER).require(LootContextParameters.DIRECT_KILLER_ENTITY).require(LootContextParameters.THIS_ENTITY).build();
 
         // Recipe type
         Registry.register(Registry.RECIPE_SERIALIZER, FarmerRecipeSerializer.ID, FarmerRecipeSerializer.INSTANCE);
