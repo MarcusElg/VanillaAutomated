@@ -16,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextType;
 import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.screen.PropertyDelegate;
@@ -274,14 +275,19 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
             return;
         }
 
+        if (items.get(0).isEmpty()) {
+            return;
+        }
+
         CompoundTag entityData = items.get(0).getTag().getCompound("EntityData");
         LivingEntity entity = (LivingEntity) EntityType.loadEntityWithPassengers(entityData, world, (entityx) -> {
             return entityx;
         });
 
-        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, ItemStack.EMPTY).parameter(LootContextParameters.THIS_ENTITY, player).random(this.random);
+        // Yes I probably don't need all of those parameters lol but it works :P
+        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.LAST_DAMAGE_PLAYER, player).parameter(LootContextParameters.THIS_ENTITY, player).parameter(LootContextParameters.DIRECT_KILLER_ENTITY, player).random(this.random);
         LootTable lootTable = this.world.getServer().getLootManager().getTable(entity.getLootTable());
-        List<ItemStack> list = lootTable.generateLoot(builder.build(LootContextTypes.FISHING));
+        List<ItemStack> list = lootTable.generateLoot(builder.build(VanillaAutomated.mobLootType));
 
         for (int i = 2; i < 11; i++) {
             for (int j = 0; j < list.size(); j++) {
