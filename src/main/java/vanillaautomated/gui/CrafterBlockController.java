@@ -47,9 +47,11 @@ public class CrafterBlockController extends SyncedGuiDescription {
             for (int i = 0; i < 3; i++) {
                 WItemSlot craftingSlot = WItemSlot.of(blockInventory, lastSlotIndex);
                 machinePanel.add(craftingSlot, i + 3, j);
+
                 WItemSprite item = new WItemSprite(new ItemStack(Registry.ITEM.get(new Identifier(itemStrings[i + j * 3].replace(".", ":"))), 1));
                 itemSprites.add(item);
                 machinePanel.add(item, i + 3, j);
+
                 lastSlotIndex++;
             }
         }
@@ -73,13 +75,14 @@ public class CrafterBlockController extends SyncedGuiDescription {
 
         root.add(this.createPlayerInventoryPanel(true), 0, 74);
         root.validate(this);
+
     }
 
-    private void sendPacket (int change, BlockPos blockPos) {
+    private void sendPacket(int change, BlockPos blockPos) {
         PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
         passedData.writeBlockPos(blockPos);
         // Send packet to server to change the block for us
         ClientSidePacketRegistry.INSTANCE.sendToServer(VanillaAutomated.crafter_reset_packet, passedData);
-        ((CrafterBlockEntity)world.getBlockEntity(blockPos)).resetRecipeClient();
+        ((CrafterBlockEntity) world.getBlockEntity(blockPos)).resetRecipeClient();
     }
 }
