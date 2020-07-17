@@ -3,11 +3,12 @@ package vanillaautomated.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.cottonmc.cotton.gui.widget.WWidget;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.SpriteAtlasTexture;
@@ -17,11 +18,9 @@ import net.minecraft.world.World;
 
 public class WItemSprite extends WWidget {
     ItemStack itemStack;
-    ItemRenderer itemRenderer;
 
     public WItemSprite (ItemStack itemStack) {
         this.itemStack = itemStack;
-        itemRenderer = MinecraftClient.getInstance().getItemRenderer();
     }
 
     public void setItem (ItemStack itemStack) {
@@ -33,11 +32,13 @@ public class WItemSprite extends WWidget {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        renderGuiItemModel(itemStack, x + 1, y + 1, itemRenderer.getHeldItemModel(itemStack, (World)null, null));
+        renderGuiItemModel(itemStack, x + 1, y + 1, MinecraftClient.getInstance().getItemRenderer().getHeldItemModel(itemStack, (World)null, null));
     }
 
     // Modified method from ItemRenderer
+    @Environment(EnvType.CLIENT)
     private void renderGuiItemModel(ItemStack stack, int x, int y, BakedModel model) {
         RenderSystem.pushMatrix();
         MinecraftClient.getInstance().getTextureManager().bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
@@ -61,7 +62,7 @@ public class WItemSprite extends WWidget {
             DiffuseLighting.disableGuiDepthLighting();
         }
 
-        itemRenderer.renderItem(stack, ModelTransformation.Mode.GUI, false, matrixStack, immediate, 2000, OverlayTexture.DEFAULT_UV, model);
+        MinecraftClient.getInstance().getItemRenderer().renderItem(stack, ModelTransformation.Mode.GUI, false, matrixStack, immediate, 2000, OverlayTexture.DEFAULT_UV, model);
         immediate.draw();
         RenderSystem.enableDepthTest();
         if (bl) {
