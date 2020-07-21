@@ -344,7 +344,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
             return false;
         }
 
-        return (items.get(10).getCount() + recipe.getOutput().getCount()) <= 64;
+        return (items.get(10).getCount() + recipe.getOutput().getCount()) <= recipe.getOutput().getMaxCount();
     }
 
     private void updateCurrentRecipe() {
@@ -469,6 +469,10 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
         if (slot > 0 && slot < 10) {
             possible = recipeItems.get(slot - 1) == stack.getItem();
+
+            if (!items.get(slot).isEmpty()) {
+                possible = false;
+            }
         }
 
         return possible;
