@@ -20,7 +20,7 @@ public class MagnetBlockEntity extends BlockEntity implements Tickable {
     public void tick() {
         Vec3d currentPos = Vec3d.of(getPos());
         currentPos.add(0.5f, 0.5f, 0.5f);
-        List<ItemEntity> entities = world.getEntities(EntityType.ITEM, new Box(currentPos.getX() - 5, currentPos.getY() - 5, currentPos.getZ() - 5, currentPos.getX() + 6, currentPos.getY() + 6, currentPos.getZ() + 6), new Predicate<ItemEntity>() {
+        List<ItemEntity> entities = world.getEntitiesByType(EntityType.ITEM, new Box(currentPos.getX() - 5, currentPos.getY() - 5, currentPos.getZ() - 5, currentPos.getX() + 6, currentPos.getY() + 6, currentPos.getZ() + 6), new Predicate<ItemEntity>() {
             @Override
             public boolean test(ItemEntity itemEntity) {
                 return true;
