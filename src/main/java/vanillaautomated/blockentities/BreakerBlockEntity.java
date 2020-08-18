@@ -31,6 +31,7 @@ import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blocks.BreakerBlock;
@@ -242,7 +243,7 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         Direction direction = (Direction) world.getBlockState(pos).get(BreakerBlock.FACING);
         BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
         Block block = world.getBlockState(position).getBlock();
-        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.POSITION, getPos()).parameter(LootContextParameters.TOOL, items.get(0)).parameter(LootContextParameters.THIS_ENTITY, player).parameter(LootContextParameters.BLOCK_STATE, world.getBlockState(position)).random(this.random);
+        LootContext.Builder builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.ORIGIN, new Vec3d(getPos().getX(), getPos().getY(), getPos().getZ())).parameter(LootContextParameters.TOOL, items.get(0)).parameter(LootContextParameters.THIS_ENTITY, player).parameter(LootContextParameters.BLOCK_STATE, world.getBlockState(position)).random(this.random);
         LootTable lootTable = this.world.getServer().getLootManager().getTable(block.getLootTableId());
 
         if (!items.get(0).isEmpty()) {
