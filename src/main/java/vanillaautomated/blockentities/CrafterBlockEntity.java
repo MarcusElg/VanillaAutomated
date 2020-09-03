@@ -43,6 +43,7 @@ import vanillaautomated.gui.CrafterBlockController;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
 
@@ -157,20 +158,24 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     public void setStack(int slot, ItemStack stack) {
         // Set recipe
         if (slot > 0 && slot < 10 && stack.getItem() != Items.AIR) {
+            Item oldRecipeItem = recipeItems.get(slot - 1);
             recipeItems.set(slot - 1, stack.getItem());
 
-            List<? extends PlayerEntity> players = world.getPlayers();
-            for (int i = 0; i < players.size(); i++) {
-                if (players.get(i).currentScreenHandler != null && players.get(i).currentScreenHandler instanceof CrafterBlockController) {
-                    // Server side
-                    CrafterBlockController controller = (CrafterBlockController) players.get(i).currentScreenHandler;
-                    controller.itemSprites.get(slot - 1).setItem(new ItemStack(stack.getItem()));
+            // Only change visuals if it's the player who set the item
+            if (oldRecipeItem != recipeItems.get(slot - 1)) {
+                List<? extends PlayerEntity> players = world.getPlayers();
+                for (int i = 0; i < players.size(); i++) {
+                    if (players.get(i).currentScreenHandler != null && players.get(i).currentScreenHandler instanceof CrafterBlockController) {
+                        // Server side
+                        CrafterBlockController controller = (CrafterBlockController) players.get(i).currentScreenHandler;
+                        controller.itemSprites.get(slot - 1).setItem(new ItemStack(stack.getItem()));
 
-                    // Client side
-                    PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-                    data.writeItemStack(stack);
-                    data.writeInt(slot - 1);
-                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(players.get(i), VanillaAutomated.update_crafter_gui_packet, data);
+                        // Client side
+                        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
+                        data.writeItemStack(stack);
+                        data.writeInt(slot - 1);
+                        ServerSidePacketRegistry.INSTANCE.sendToPlayer(players.get(i), VanillaAutomated.update_crafter_gui_packet, data);
+                    }
                 }
             }
         }
