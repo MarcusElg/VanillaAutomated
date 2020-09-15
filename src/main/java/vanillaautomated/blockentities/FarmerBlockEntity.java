@@ -162,8 +162,13 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         this.maxFuelTime = tag.getShort("MaxFuelTime");
         this.spedUp = tag.getBoolean("SpedUp");
 
+        if (tag.contains("Speed")) {
+            this.setSpeed = tag.getShort("Speed");
+            this.spedUpSpeed = tag.getShort("SpedUpSpeed");
+        }
+
         if (spedUp) {
-            speed = 20;
+            speed = spedUpSpeed;
         }
 
         recipeString = tag.getString("CurrentRecipe");
@@ -180,6 +185,8 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putBoolean("SpedUp", this.spedUp);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
+        tag.putShort("Speed", (short)this.setSpeed);
+        tag.putShort("SpedUpSpeed", (short)this.spedUpSpeed);
         return super.toTag(tag);
     }
 
