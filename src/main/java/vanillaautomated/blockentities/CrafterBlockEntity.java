@@ -223,6 +223,10 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
         recipeString = tag.getString("CurrentRecipe");
+
+        if (tag.contains("Speed")) {
+            this.speed = tag.getShort("Speed");
+        }
     }
 
     @Override
@@ -236,6 +240,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
+        tag.putShort("Speed", (short)this.speed);
         return super.toTag(tag);
     }
 

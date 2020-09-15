@@ -162,6 +162,10 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         this.processingTime = tag.getShort("ProcessingTime");
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
+
+        if (tag.contains("Speed")) {
+            this.speed = tag.getShort("Speed");
+        }
     }
 
     @Override
@@ -173,6 +177,7 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
+        tag.putShort("Speed", (short)this.speed);
         return super.toTag(tag);
     }
 

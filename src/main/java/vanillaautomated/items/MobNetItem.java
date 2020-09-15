@@ -73,9 +73,15 @@ public class MobNetItem extends Item {
             entityData.remove("Leash");
             entityData.remove("UUID");
 
-            Entity entity = EntityType.loadEntityWithPassengers(entityData, context.getWorld(), (entityx) -> {
-                return entityx;
-            });
+            Entity entity = null;
+
+            try {
+                entity = EntityType.loadEntityWithPassengers(entityData, context.getWorld(), (entityx) -> {
+                    return entityx;
+                });
+            } catch (Exception e) {
+                // Ignore
+            }
 
             // Get position (copied from Spawn Egg Item)
             BlockPos blockPos = context.getBlockPos();
@@ -90,8 +96,10 @@ public class MobNetItem extends Item {
             }
 
             // Spawn entity
-            entity.resetPosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
-            entity.updatePosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
+            if (entity != null) {
+                entity.resetPosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
+                entity.updatePosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
+            }
             context.getWorld().spawnEntity(entity);
 
             // Reset mob net

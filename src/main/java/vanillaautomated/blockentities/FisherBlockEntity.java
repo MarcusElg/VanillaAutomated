@@ -159,6 +159,10 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
         this.hasWater = tag.getBoolean("HasWater");
+
+        if (tag.contains("Speed")) {
+            this.speed = tag.getShort("Speed");
+        }
     }
 
     @Override
@@ -171,6 +175,7 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putBoolean("HasWater", this.hasWater);
+        tag.putShort("Speed", (short)this.speed);
         return super.toTag(tag);
     }
 

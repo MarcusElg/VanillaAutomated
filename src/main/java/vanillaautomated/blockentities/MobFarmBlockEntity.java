@@ -182,6 +182,10 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
         this.maxFuelTime = tag.getShort("MaxFuelTime");
         this.entityType = tag.getString("EntityType");
         updateEntityType();
+
+        if (tag.contains("Speed")) {
+            this.speed = tag.getShort("Speed");
+        }
     }
 
     @Override
@@ -194,6 +198,7 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putString("EntityType", this.entityType);
+        tag.putShort("Speed", (short)this.speed);
         return super.toTag(tag);
     }
 
