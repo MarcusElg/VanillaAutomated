@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 
 import java.util.List;
@@ -50,12 +51,15 @@ public class MagnetBlockEntity extends BlockEntity {
         }
         // only pick up items every 8 ticks
         t.cooldown++;
-        if (t.cooldown % 8 != 0) {
+        if (t.cooldown % VanillaAutomated.config.magnetTime != 0) {
             return;
         }
-
+        int range = VanillaAutomated.config.magnetRange;
         Vec3d currentPos = Vec3d.of(blockPos);
-        List<ItemEntity> entities = world.getEntitiesByType(EntityType.ITEM, new Box(currentPos.getX() - 5, currentPos.getY() - 5, currentPos.getZ() - 5, currentPos.getX() + 6, currentPos.getY() + 6, currentPos.getZ() + 6), itemEntity -> true);
+        List<ItemEntity> entities = world.getEntitiesByType(EntityType.ITEM,
+                new Box(currentPos.getX() - range, currentPos.getY() - range, currentPos.getZ() - range,
+                        currentPos.getX() + range, currentPos.getY() + range, currentPos.getZ() + range),
+                itemEntity -> true);
 
         for (int i = 0; i < entities.size(); i++) {
             ItemEntity item = entities.get(i);

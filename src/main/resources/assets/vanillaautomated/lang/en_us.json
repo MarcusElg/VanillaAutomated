@@ -29,16 +29,43 @@
 
   "item.vanillaautomated.mob_net": "Mob Net",
 
-  "text.autoconfig.vanillaautomated.option.breakerTimer": "Breaker activation in Ticks",
+  "text.autoconfig.vanillaautomated.title": "Menu for VanillaAutomated",
+  "text.autoconfig.vanillaautomated.option.enableBreaker": "Breaker enabled",
+  "text.autoconfig.vanillaautomated.option.breakerTime": "Breaker activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableCobblegenerator": "Cobblegenerator enabled",
   "text.autoconfig.vanillaautomated.option.cobblestoneGeneratorTime": "Cobblestone-Generator activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableCrafter": "Crafter enabled",
   "text.autoconfig.vanillaautomated.option.crafterTime": "Crafter activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableCrusher": "Crusher enabled",
   "text.autoconfig.vanillaautomated.option.crusherTime": "Crusher activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableFarmer": "Farmer enabled",
   "text.autoconfig.vanillaautomated.option.farmerTime": "Farmer activation in Ticks",
   "text.autoconfig.vanillaautomated.option.bonemealedFarmerTime": "Farmer(Bonemeal) activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableFisher": "Fisher enabled",
   "text.autoconfig.vanillaautomated.option.fisherTime": "Fisher activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableMobFarm": "MobFarm enabled",
   "text.autoconfig.vanillaautomated.option.mobFarmTime": "Mobfarm activation in Ticks",
-  "text.autoconfig.vanillaautomated.option.placerTime": "Placer activation in Ticks"
+  "text.autoconfig.vanillaautomated.option.enablePlacer": "Placer enabled",
+  "text.autoconfig.vanillaautomated.option.placerTime": "Placer activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.enableMagnet": "Magnet enabled",
+  "text.autoconfig.vanillaautomated.option.magnetRange": "Magnet pickup range in blocks",
+  "text.autoconfig.vanillaautomated.option.magnetTime": "Magnet pickup cycle in ticks",
+  "text.autoconfig.vanillaautomated.option.enableNullifier": "Nullifier enabled",
+  "text.autoconfig.vanillaautomated.option.enableTimer": "Timer enabled",
 
+
+
+  "text.autoconfig.vanillaautomated.category.Breaker": "Breaker",
+  "text.autoconfig.vanillaautomated.category.Cobblegenerator": "Cobblegenerator",
+  "text.autoconfig.vanillaautomated.category.Crafter": "Crafter",
+  "text.autoconfig.vanillaautomated.category.Crusher": "Crusher",
+  "text.autoconfig.vanillaautomated.category.Farmer": "Farmer",
+  "text.autoconfig.vanillaautomated.category.Fisher": "Fisher",
+  "text.autoconfig.vanillaautomated.category.MobFarm": "MobFarm",
+  "text.autoconfig.vanillaautomated.category.Placer": "Placer",
+  "text.autoconfig.vanillaautomated.category.Magnet": "Magnet",
+  "text.autoconfig.vanillaautomated.category.Nullifier": "Nullifier",
+  "text.autoconfig.vanillaautomated.category.Timer": "Timer"
 
 
 }
