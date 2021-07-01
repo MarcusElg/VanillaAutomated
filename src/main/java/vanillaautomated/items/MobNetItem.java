@@ -55,7 +55,7 @@ public class MobNetItem extends Item {
         tag.put("EntityData", entityData);
         stack.setTag(tag);
         user.setStackInHand(hand, stack);
-        entity.remove(Entity.RemovalReason.valueOf("Caught with net"));
+        entity.remove(Entity.RemovalReason.DISCARDED);
         return ActionResult.SUCCESS;
     }
 
