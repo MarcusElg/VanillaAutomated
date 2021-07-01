@@ -31,9 +31,9 @@ import vanillaautomated.recipes.FarmerRecipe;
 public class FarmerBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
     private final PropertyDelegate propertyDelegate;
-    public int speed = 2400;
+    public int speed = VanillaAutomated.config.farmerTime;
     public int setSpeed = 2400;
-    public int spedUpSpeed = 20;
+    public int spedUpSpeed = VanillaAutomated.config.bonemealedFarmerTime;
     public boolean spedUp = false; // Used bonemeal
     DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     boolean firstTick = true;

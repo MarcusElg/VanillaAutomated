@@ -27,5 +27,18 @@
 
   "vanillaautomated.container.timer.speed": "Speed",
 
-  "item.vanillaautomated.mob_net": "Mob Net"
+  "item.vanillaautomated.mob_net": "Mob Net",
+
+  "text.autoconfig.vanillaautomated.option.breakerTimer": "Breaker activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.cobblestoneGeneratorTime": "Cobblestone-Generator activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.crafterTime": "Crafter activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.crusherTime": "Crusher activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.farmerTime": "Farmer activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.bonemealedFarmerTime": "Farmer(Bonemeal) activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.fisherTime": "Fisher activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.mobFarmTime": "Mobfarm activation in Ticks",
+  "text.autoconfig.vanillaautomated.option.placerTime": "Placer activation in Ticks"
+
+
+
 }

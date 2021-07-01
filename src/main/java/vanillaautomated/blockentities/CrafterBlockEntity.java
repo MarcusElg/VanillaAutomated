@@ -49,7 +49,7 @@ import java.util.logging.Logger;
 public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
 
     private final PropertyDelegate propertyDelegate;
-    public int speed = 10;
+    public int speed = VanillaAutomated.config.crafterTime;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     DefaultedList<Item> recipeItems = DefaultedList.ofSize(9, Items.AIR);
     boolean firstTick = true;
@@ -70,8 +70,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
                         return processingTime;
                     case 2:
                         return maxFuelTime;
-                    case 3:
-                        return speed;
                     default:
                         return 0;
                 }
@@ -87,9 +85,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
                         break;
                     case 2:
                         maxFuelTime = value;
-                        break;
-                    case 3:
-                        speed = value;
                         break;
                     default:
                         break;
@@ -232,10 +227,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
         recipeString = tag.getString("CurrentRecipe");
-
-        if (tag.contains("Speed")) {
-            this.speed = tag.getShort("Speed");
-        }
     }
 
     @Override
@@ -249,7 +240,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
-        tag.putShort("Speed", (short) this.speed);
         return super.writeNbt(tag);
     }
 

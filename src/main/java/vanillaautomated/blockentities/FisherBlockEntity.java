@@ -39,7 +39,7 @@ import java.util.Random;
 public class FisherBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
     private final PropertyDelegate propertyDelegate;
-    public int speed = 200;
+    public int speed = VanillaAutomated.config.fisherTime;
     public boolean hasWater = false;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(10, ItemStack.EMPTY);
     private int processingTime;
@@ -58,8 +58,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
                         return processingTime;
                     case 2:
                         return maxFuelTime;
-                    case 3:
-                        return speed;
                     default:
                         return 0;
                 }
@@ -75,9 +73,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
                         break;
                     case 2:
                         maxFuelTime = value;
-                        break;
-                    case 3:
-                        speed = value;
                         break;
                     default:
                         break;
@@ -224,10 +219,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
         this.hasWater = tag.getBoolean("HasWater");
-
-        if (tag.contains("Speed")) {
-            this.speed = tag.getShort("Speed");
-        }
     }
 
     @Override
@@ -240,7 +231,6 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putBoolean("HasWater", this.hasWater);
-        tag.putShort("Speed", (short) this.speed);
         return super.writeNbt(tag);
     }
 

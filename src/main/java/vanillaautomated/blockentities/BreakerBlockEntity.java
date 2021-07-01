@@ -43,7 +43,7 @@ import java.util.Random;
 public class BreakerBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
     private final PropertyDelegate propertyDelegate;
-    public int speed = 10;
+    public int speed = VanillaAutomated.config.breakerTime;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
@@ -61,8 +61,6 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
                         return processingTime;
                     case 2:
                         return maxFuelTime;
-                    case 3:
-                        return speed;
                     default:
                         return 0;
                 }
@@ -78,9 +76,6 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
                         break;
                     case 2:
                         maxFuelTime = value;
-                        break;
-                    case 3:
-                        speed = value;
                         break;
                     default:
                         break;
@@ -166,10 +161,6 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         this.processingTime = tag.getShort("ProcessingTime");
         this.fuelTime = tag.getShort("FuelTime");
         this.maxFuelTime = tag.getShort("MaxFuelTime");
-
-        if (tag.contains("Speed")) {
-            this.speed = tag.getShort("Speed");
-        }
     }
 
     @Override
@@ -181,7 +172,6 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putShort("Speed", (short) this.speed);
         return super.writeNbt(tag);
     }
 
@@ -234,6 +224,7 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
             }
         }
 
+        System.out.println(t.speed);
         // Generate items
         if (t.processingTime == t.speed) {
             t.processingTime = 0;
