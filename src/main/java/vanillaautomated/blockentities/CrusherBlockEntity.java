@@ -33,54 +33,15 @@ import java.util.Random;
 
 public class CrusherBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
-    DefaultedList<ItemStack> items = DefaultedList.ofSize(3, ItemStack.EMPTY);
-    private int processingTime;
-    private int fuelTime;
-    private int maxFuelTime;
     public int speed = VanillaAutomated.config.crusherTime;
     private Random random = new Random();
-    private final PropertyDelegate propertyDelegate;
     private String recipeString = "null";
     private CrusherRecipe currentRecipe;
     boolean firstTick = true;
 
     public CrusherBlockEntity(BlockPos pos, BlockState state) {
         super(VanillaAutomatedBlocks.crusherBlockEntity, pos, state);
-        this.propertyDelegate = new PropertyDelegate() {
-            public int get(int index) {
-                switch (index) {
-                    case 0:
-                        return fuelTime;
-                    case 1:
-                        return processingTime;
-                    case 2:
-                        return maxFuelTime;
-                    default:
-                        return 0;
-                }
-            }
-
-            public void set(int index, int value) {
-                switch (index) {
-                    case 0:
-                        fuelTime = value;
-                        break;
-                    case 1:
-                        processingTime = value;
-                        break;
-                    case 2:
-                        maxFuelTime = value;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            public int size() {
-                return 4;
-            }
-        };
+        items = DefaultedList.ofSize(3, ItemStack.EMPTY);
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -145,30 +106,14 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         }
     }
 
-
-
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-        Inventories.readNbt(tag, items);
-        if (tag.contains("CustomName", 8)) {
-            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
-        }
-        this.processingTime = tag.getShort("ProcessingTime");
-        this.fuelTime = tag.getShort("FuelTime");
-        this.maxFuelTime = tag.getShort("MaxFuelTime");
         recipeString = tag.getString("CurrentRecipe");
     }
 
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
-        Inventories.writeNbt(tag, items);
-        if (this.customName != null) {
-            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
-        }
-        tag.putShort("ProcessingTime", (short) this.processingTime);
-        tag.putShort("FuelTime", (short) this.fuelTime);
-        tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
         return super.writeNbt(tag);
     }
@@ -190,7 +135,7 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         }
 
         // Freeze when powered
-        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED)) {
             return;
         }
 

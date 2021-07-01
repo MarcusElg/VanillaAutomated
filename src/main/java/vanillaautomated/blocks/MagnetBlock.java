@@ -8,10 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.event.listener.GameEventListener;
 import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 import vanillaautomated.blockentities.MagnetBlockEntity;
 
 public class MagnetBlock extends BlockWithEntity {

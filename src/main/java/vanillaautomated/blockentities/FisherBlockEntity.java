@@ -38,52 +38,13 @@ import java.util.Random;
 
 public class FisherBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
-    private final PropertyDelegate propertyDelegate;
     public int speed = VanillaAutomated.config.fisherTime;
     public boolean hasWater = false;
-    DefaultedList<ItemStack> items = DefaultedList.ofSize(10, ItemStack.EMPTY);
-    private int processingTime;
-    private int fuelTime;
-    private int maxFuelTime;
     private Random random = new Random();
 
     public FisherBlockEntity(BlockPos pos, BlockState state) {
         super(VanillaAutomatedBlocks.fisherBlockEntity, pos, state);
-        this.propertyDelegate = new PropertyDelegate() {
-            public int get(int index) {
-                switch (index) {
-                    case 0:
-                        return fuelTime;
-                    case 1:
-                        return processingTime;
-                    case 2:
-                        return maxFuelTime;
-                    default:
-                        return 0;
-                }
-            }
-
-            public void set(int index, int value) {
-                switch (index) {
-                    case 0:
-                        fuelTime = value;
-                        break;
-                    case 1:
-                        processingTime = value;
-                        break;
-                    case 2:
-                        maxFuelTime = value;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            public int size() {
-                return 4;
-            }
-        };
+        items = DefaultedList.ofSize(10, ItemStack.EMPTY);
     }
 
     public static void tick(World world, BlockPos blockPos, BlockState blockState, FisherBlockEntity t) {
@@ -211,25 +172,11 @@ public class FisherBlockEntity extends MachineBlockEntity implements SidedInvent
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-        Inventories.readNbt(tag, items);
-        if (tag.contains("CustomName", 8)) {
-            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
-        }
-        this.processingTime = tag.getShort("ProcessingTime");
-        this.fuelTime = tag.getShort("FuelTime");
-        this.maxFuelTime = tag.getShort("MaxFuelTime");
         this.hasWater = tag.getBoolean("HasWater");
     }
 
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
-        Inventories.writeNbt(tag, items);
-        if (this.customName != null) {
-            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
-        }
-        tag.putShort("ProcessingTime", (short) this.processingTime);
-        tag.putShort("FuelTime", (short) this.fuelTime);
-        tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putBoolean("HasWater", this.hasWater);
         return super.writeNbt(tag);
     }

@@ -4,7 +4,6 @@ import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -31,51 +30,12 @@ import java.util.Random;
 
 public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
-    private final PropertyDelegate propertyDelegate;
     public int speed = VanillaAutomated.config.cobblestoneGeneratorTime;
-    DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
-    private int processingTime;
-    private int fuelTime;
-    private int maxFuelTime;
     private Random random = new Random();
 
     public CobblestoneGeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(VanillaAutomatedBlocks.cobblestoneGeneratorBlockEntity, pos, state);
-        this.propertyDelegate = new PropertyDelegate() {
-            public int get(int index) {
-                switch (index) {
-                    case 0:
-                        return fuelTime;
-                    case 1:
-                        return processingTime;
-                    case 2:
-                        return maxFuelTime;
-                    default:
-                        return 0;
-                }
-            }
-
-            public void set(int index, int value) {
-                switch (index) {
-                    case 0:
-                        fuelTime = value;
-                        break;
-                    case 1:
-                        processingTime = value;
-                        break;
-                    case 2:
-                        maxFuelTime = value;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            public int size() {
-                return 4;
-            }
-        };
+        items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     }
 
     public static boolean canUseAsFuel(ItemStack stack) {
@@ -94,7 +54,7 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
         }
 
         // Freeze when powered
-        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED)) {
             if (t.isBurning()) {
                 t.fuelTime--;
             }
@@ -203,30 +163,6 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
         } else {
             return true;
         }
-    }
-
-    @Override
-    public void readNbt(NbtCompound tag) {
-        super.readNbt(tag);
-        Inventories.readNbt(tag, items);
-        if (tag.contains("CustomName", 8)) {
-            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
-        }
-        this.processingTime = tag.getShort("ProcessingTime");
-        this.fuelTime = tag.getShort("FuelTime");
-        this.maxFuelTime = tag.getShort("MaxFuelTime");
-    }
-
-    @Override
-    public NbtCompound writeNbt(NbtCompound tag) {
-        Inventories.writeNbt(tag, items);
-        if (this.customName != null) {
-            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
-        }
-        tag.putShort("ProcessingTime", (short) this.processingTime);
-        tag.putShort("FuelTime", (short) this.fuelTime);
-        tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        return super.writeNbt(tag);
     }
 
     public void setProcessingTime(int processingTime) {

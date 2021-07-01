@@ -30,61 +30,17 @@ import vanillaautomated.recipes.FarmerRecipe;
 
 public class FarmerBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
-    private final PropertyDelegate propertyDelegate;
     public int speed = VanillaAutomated.config.farmerTime;
     public int setSpeed = 2400;
     public int spedUpSpeed = VanillaAutomated.config.bonemealedFarmerTime;
     public boolean spedUp = false; // Used bonemeal
     DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     boolean firstTick = true;
-    private int processingTime;
-    private int fuelTime;
-    private int maxFuelTime;
     private String recipeString = "null";
     private FarmerRecipe currentRecipe = null;
 
     public FarmerBlockEntity(BlockPos pos, BlockState state) {
         super(VanillaAutomatedBlocks.farmerBlockEntity, pos, state);
-        this.propertyDelegate = new PropertyDelegate() {
-            public int get(int index) {
-                switch (index) {
-                    case 0:
-                        return fuelTime;
-                    case 1:
-                        return processingTime;
-                    case 2:
-                        return maxFuelTime;
-                    case 3:
-                        return speed;
-                    default:
-                        return 0;
-                }
-            }
-
-            public void set(int index, int value) {
-                switch (index) {
-                    case 0:
-                        fuelTime = value;
-                        break;
-                    case 1:
-                        processingTime = value;
-                        break;
-                    case 2:
-                        maxFuelTime = value;
-                        break;
-                    case 3:
-                        speed = value;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-
-            public int size() {
-                return 4;
-            }
-        };
     }
 
     public static boolean canUseAsFuel(ItemStack stack) {
@@ -158,13 +114,6 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
     @Override
     public void readNbt(NbtCompound tag) {
         super.readNbt(tag);
-        Inventories.readNbt(tag, items);
-        if (tag.contains("CustomName", 8)) {
-            this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
-        }
-        this.processingTime = tag.getShort("ProcessingTime");
-        this.fuelTime = tag.getShort("FuelTime");
-        this.maxFuelTime = tag.getShort("MaxFuelTime");
         this.spedUp = tag.getBoolean("SpedUp");
 
         if (tag.contains("Speed")) {
@@ -181,13 +130,6 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
 
     @Override
     public NbtCompound writeNbt(NbtCompound tag) {
-        Inventories.writeNbt(tag, items);
-        if (this.customName != null) {
-            tag.putString("CustomName", Text.Serializer.toJson(this.customName));
-        }
-        tag.putShort("ProcessingTime", (short) this.processingTime);
-        tag.putShort("FuelTime", (short) this.fuelTime);
-        tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putBoolean("SpedUp", this.spedUp);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
         tag.putShort("Speed", (short) this.setSpeed);
@@ -213,7 +155,7 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         }
 
         // Freeze when powered
-        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED)) {
             return;
         }
 
@@ -313,7 +255,7 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
             return 0;
         } else {
             Item item = fuel.getItem();
-            return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
+            return AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
     }
 

@@ -21,13 +21,10 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
-import vanillaautomated.blockentities.MachineBlockEntity;
 import vanillaautomated.blockentities.PlacerBlockEntity;
 
 import java.util.Random;

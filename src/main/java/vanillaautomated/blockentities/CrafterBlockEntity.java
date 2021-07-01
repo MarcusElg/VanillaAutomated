@@ -44,7 +44,6 @@ import vanillaautomated.gui.CrafterBlockController;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
 

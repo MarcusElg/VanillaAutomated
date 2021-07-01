@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomatedBlocks;
-import vanillaautomated.blockentities.MagnetBlockEntity;
 import vanillaautomated.blockentities.TimerBlockEntity;
 
 import java.util.Random;
