@@ -2,6 +2,7 @@ package vanillaautomated.blockentities;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
@@ -14,6 +15,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.TimerController;
@@ -62,20 +64,20 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ex
         return new TranslatableText("block." + VanillaAutomated.prefix + ".timer");
     }
 
-    public void tick() {
+    public static <T extends BlockEntity> void tick(World world, BlockPos blockPos, BlockState blockState, TimerBlockEntity t) {
         if (world.isClient()) {
             return;
         }
 
-        currentTime++;
+        t.currentTime++;
 
-        if (currentTime >= time) {
-            world.setBlockState(pos, VanillaAutomatedBlocks.timerBlock.getDefaultState().with(Properties.ENABLED, true));
-            currentTime = -1;
-            disabled = false;
-        } else if (!disabled) {
-            world.setBlockState(pos, VanillaAutomatedBlocks.timerBlock.getDefaultState().with(Properties.ENABLED, false));
-            disabled = true;
+        if (t.currentTime >= t.time) {
+            world.setBlockState(t.pos, VanillaAutomatedBlocks.timerBlock.getDefaultState().with(Properties.ENABLED, true));
+            t.currentTime = -1;
+            t.disabled = false;
+        } else if (!t.disabled) {
+            world.setBlockState(t.pos, VanillaAutomatedBlocks.timerBlock.getDefaultState().with(Properties.ENABLED, false));
+            t.disabled = true;
         }
     }
 
