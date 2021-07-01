@@ -23,7 +23,6 @@ public class MagnetBlockEntity extends BlockEntity {
     }
 
     private static boolean insert(World world, BlockPos pos, BlockState state, ItemStack stack) {
-
         Inventory inventory2 = (Inventory) world.getBlockEntity(pos);
 
         if (inventory2 != null) {
@@ -49,6 +48,7 @@ public class MagnetBlockEntity extends BlockEntity {
         if (world.isClient()) {
             return;
         }
+        // only pick up items every 8 ticks
         t.cooldown++;
         if (t.cooldown % 8 != 0) {
             return;
