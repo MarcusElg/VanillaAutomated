@@ -12,6 +12,8 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 @Config(name = "vanillaautomated")
 public class VanillaAutomatedConfig implements ConfigData, ModMenuApi {
 
+    public boolean infiniteVillagers = true;
+
     @ConfigEntry.Category("Breaker")
     public boolean enableBreaker = true;
     @ConfigEntry.Category("Breaker")
