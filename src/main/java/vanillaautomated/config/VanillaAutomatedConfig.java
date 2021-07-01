@@ -3,13 +3,16 @@ package vanillaautomated.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.TranslatableText;
 
-public class VanillaAutomatedConfig implements ModMenuApi {
+@Config(name="vanillaautomated")
+public class VanillaAutomatedConfig implements ConfigData, ModMenuApi {
 
     public int breakerTime = 10;
     public int cobblestoneGeneratorTime = 200;
@@ -21,7 +24,7 @@ public class VanillaAutomatedConfig implements ModMenuApi {
     public int mobFarmTime = 400;
     public int placerTime = 10;
 
-    /*@Override
+    @Override
     public void validatePostLoad() throws ConfigData.ValidationException {
         breakerTime = Math.max(5, breakerTime);
         cobblestoneGeneratorTime = Math.max(5, cobblestoneGeneratorTime);
@@ -33,9 +36,9 @@ public class VanillaAutomatedConfig implements ModMenuApi {
         mobFarmTime = Math.max(5, mobFarmTime);
         placerTime = Math.max(5, placerTime);
     }
-     */
 
-    @Override
+
+
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
         return this::getConfigScreen;
     }
