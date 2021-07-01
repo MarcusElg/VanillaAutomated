@@ -15,9 +15,9 @@ public class FisherBlockController extends SyncedGuiDescription {
     public FisherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(VanillaAutomatedBlocks.fisherBlockScreen, syncId, playerInventory, getBlockInventory(context, 10), getBlockPropertyDelegate(context, 4));
 
-        setTitleAlignment(HorizontalAlignment.CENTER);
+        setTitleAlignment(HorizontalAlignment.LEFT);
         WPlainPanel root = new WPlainPanel();
-        root.setSize(160, 150);
+        root.setSize(176, 170);
         setRootPanel(root);
 
         WGridPanel machinePanel = new WGridPanel();
@@ -43,7 +43,7 @@ public class FisherBlockController extends SyncedGuiDescription {
 
         root.add(machinePanel, 0, 10);
 
-        root.add(this.createPlayerInventoryPanel(true), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 7, 76);
         root.validate(this);
     }
 }

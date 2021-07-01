@@ -25,16 +25,16 @@ public class TimerController extends SyncedGuiDescription {
 
         time = currentTime;
 
-        setTitleAlignment(HorizontalAlignment.CENTER);
+        setTitleAlignment(HorizontalAlignment.LEFT);
         WPlainPanel root = new WPlainPanel();
-        root.setSize(160, 150);
+        root.setSize(176, 170);
         setRootPanel(root);
 
-        int rowHeight = 25;
+        int rowHeight = 40;
 
         WLabel speedTitle = new WLabel(new TranslatableText("vanillaautomated.container.timer.speed"));
         speedTitle.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        root.add(speedTitle, 0, 15, 160, 10);
+        root.add(speedTitle, 0, 30, 160, 10);
 
         speedLabel = new WLabel(time + "");
         speedLabel.setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -77,7 +77,7 @@ public class TimerController extends SyncedGuiDescription {
         });
         root.add(speedButton, 117, rowHeight, 27, 18);
 
-        root.add(this.createPlayerInventoryPanel(true), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 7, 76);
         root.validate(this);
     }
 
