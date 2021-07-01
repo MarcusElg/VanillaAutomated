@@ -15,9 +15,9 @@ public class CrusherBlockController extends SyncedGuiDescription {
     public CrusherBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(VanillaAutomatedBlocks.crusherBlockScreen, syncId, playerInventory, getBlockInventory(context, 3), getBlockPropertyDelegate(context, 4));
 
-        setTitleAlignment(HorizontalAlignment.CENTER);
+        setTitleAlignment(HorizontalAlignment.LEFT);
         WPlainPanel root = new WPlainPanel();
-        root.setSize(160, 150);
+        root.setSize(176, 180);
         setRootPanel(root);
 
         WGridPanel machinePanel = new WGridPanel();
@@ -38,9 +38,9 @@ public class CrusherBlockController extends SyncedGuiDescription {
         WItemSlot outputSlot = WItemSlot.of(blockInventory, 2);
         machinePanel.add(outputSlot, 5, 2);
 
-        root.add(machinePanel, 0, 10);
+        root.add(machinePanel, 0, 20);
 
-        root.add(this.createPlayerInventoryPanel(true), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 7, 86);
         root.validate(this);
     }
 }

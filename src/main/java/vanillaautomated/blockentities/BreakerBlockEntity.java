@@ -31,6 +31,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blocks.BreakerBlock;
@@ -184,64 +185,64 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         return super.writeNbt(tag);
     }
 
-    public void tick() {
+    public static void tick(World world, BlockPos blockPos, BlockState blockState, BreakerBlockEntity t) {
         if (world.isClient) {
             return;
         }
 
-        Direction direction = (Direction) world.getBlockState(pos).get(BreakerBlock.FACING);
-        BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
+        Direction direction = (Direction) world.getBlockState(t.pos).get(BreakerBlock.FACING);
+        BlockPos position = new BlockPos(t.pos.getX() + direction.getOffsetX(), t.pos.getY() + direction.getOffsetY(), t.pos.getZ() + direction.getOffsetZ());
 
-        if (this.isBurning()) {
-            this.fuelTime--;
+        if (t.isBurning()) {
+            t.fuelTime--;
         }
 
         if (world.getBlockState(position).isAir() ||
                 world.getBlockState(position).getHardness(world, position) > 16000000 ||
                 world.getBlockState(position).getHardness(world, position) == -1 ||
                 world.getBlockState(position).hasBlockEntity()) {
-            this.processingTime = 0;
+            t.processingTime = 0;
             return;
         }
 
         // Freeze when powered
-        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
             return;
         }
 
         boolean changed = false;
-        if (this.isBurning()) {
-            this.processingTime++;
+        if (t.isBurning()) {
+            t.processingTime++;
         }
 
-        ItemStack itemStack = this.items.get(1);
+        ItemStack itemStack = t.items.get(1);
         // Burn another item
-        if (!this.isBurning()) {
+        if (!t.isBurning()) {
             if (!itemStack.isEmpty()) {
-                this.maxFuelTime = this.getFuelTime(itemStack);
-                this.fuelTime = this.maxFuelTime;
+                t.maxFuelTime = t.getFuelTime(itemStack);
+                t.fuelTime = t.maxFuelTime;
                 changed = true;
 
                 Item item = itemStack.getItem();
                 itemStack.decrement(1);
                 if (itemStack.isEmpty()) {
                     Item item2 = item.getRecipeRemainder();
-                    this.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                    t.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                 }
             } else {
-                this.processingTime = 0;
+                t.processingTime = 0;
             }
         }
 
         // Generate items
-        if (this.processingTime == speed) {
-            this.processingTime = 0;
-            this.generateItems();
+        if (t.processingTime == t.speed) {
+            t.processingTime = 0;
+            t.generateItems();
             changed = true;
         }
 
         if (changed) {
-            this.markDirty();
+            t.markDirty();
         }
     }
 

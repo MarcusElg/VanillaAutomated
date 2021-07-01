@@ -115,6 +115,10 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         return recipeItems;
     }
 
+    /*
+     * TODO
+     *  this somehow duplicates items. When you click on X the previous recipe will be processed once again
+     */
     public void resetRecipe() {
         recipeItems = DefaultedList.ofSize(9, Items.AIR);
         for (int i = 0; i < 9; ++i) {

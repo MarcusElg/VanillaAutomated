@@ -187,7 +187,6 @@ public class CrusherBlockEntity extends MachineBlockEntity implements SidedInven
         if (world.isClient) {
             return;
         }
-
         if (t.firstTick) {
             if (!t.recipeString.equals("null") && !t.recipeString.isEmpty()) {
                 t.currentRecipe = (CrusherRecipe) world.getRecipeManager().get(Identifier.tryParse(t.recipeString)).get();

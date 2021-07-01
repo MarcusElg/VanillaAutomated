@@ -6,6 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.BreakerBlockEntity;
+import vanillaautomated.blockentities.FisherBlockEntity;
 
 import java.util.Random;
 
@@ -101,5 +104,11 @@ public class BreakerBlock extends MachineBlock {
 
     static {
         FACING = HorizontalFacingBlock.FACING;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, VanillaAutomatedBlocks.breakerBlockEntity, BreakerBlockEntity::tick);
     }
 }

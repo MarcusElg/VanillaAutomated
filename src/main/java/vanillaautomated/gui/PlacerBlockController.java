@@ -15,9 +15,9 @@ public class PlacerBlockController extends SyncedGuiDescription {
     public PlacerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(VanillaAutomatedBlocks.placerBlockScreen, syncId, playerInventory, getBlockInventory(context, 2), getBlockPropertyDelegate(context, 4));
 
-        setTitleAlignment(HorizontalAlignment.CENTER);
+        setTitleAlignment(HorizontalAlignment.LEFT);
         WPlainPanel root = new WPlainPanel();
-        root.setSize(160, 150);
+        root.setSize(176, 170);
         setRootPanel(root);
 
         WGridPanel machinePanel = new WGridPanel();
@@ -35,9 +35,9 @@ public class PlacerBlockController extends SyncedGuiDescription {
         WBar progress = new WBar(VanillaAutomated.progress_background, VanillaAutomated.progress, 1, 3, WBar.Direction.RIGHT);
         machinePanel.add(progress, 5, 1);
 
-        root.add(machinePanel, 0, 10);
+        root.add(machinePanel, 0, 20);
 
-        root.add(this.createPlayerInventoryPanel(true), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 7, 76);
         root.validate(this);
     }
 }

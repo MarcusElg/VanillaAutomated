@@ -12,9 +12,9 @@ public class BreakerBlockController extends SyncedGuiDescription {
     public BreakerBlockController(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
         super(VanillaAutomatedBlocks.breakerBlockScreen, syncId, playerInventory, getBlockInventory(context, 4), getBlockPropertyDelegate(context, 4));
 
-        setTitleAlignment(HorizontalAlignment.CENTER);
+        setTitleAlignment(HorizontalAlignment.LEFT);
         WPlainPanel root = new WPlainPanel();
-        root.setSize(160, 150);
+        root.setSize(176, 170);
         setRootPanel(root);
 
         WGridPanel machinePanel = new WGridPanel();
@@ -35,9 +35,9 @@ public class BreakerBlockController extends SyncedGuiDescription {
         WBar progress = new WBar(VanillaAutomated.progress_background, VanillaAutomated.progress, 1, 3, WBar.Direction.RIGHT);
         machinePanel.add(progress, 5, 1);
 
-        root.add(machinePanel, 0, 10);
+        root.add(machinePanel, 0, 20);
 
-        root.add(this.createPlayerInventoryPanel(true), 0, 74);
+        root.add(this.createPlayerInventoryPanel(true), 7, 76);
         root.validate(this);
     }
 }
