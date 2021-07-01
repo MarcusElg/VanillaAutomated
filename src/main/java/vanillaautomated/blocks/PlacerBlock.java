@@ -6,6 +6,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -21,8 +23,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
+import vanillaautomated.blockentities.MachineBlockEntity;
 import vanillaautomated.blockentities.PlacerBlockEntity;
 
 import java.util.Random;
@@ -31,14 +36,18 @@ public class PlacerBlock extends MachineBlock {
 
     public static final DirectionProperty FACING;
 
+    static {
+        FACING = HorizontalFacingBlock.FACING;
+    }
+
     public PlacerBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(POWERED, false));
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new PlacerBlockEntity();
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new PlacerBlockEntity(pos, state);
     }
 
     @Override
@@ -97,7 +106,9 @@ public class PlacerBlock extends MachineBlock {
         builder.add(FACING).add(POWERED);
     }
 
-    static {
-        FACING = HorizontalFacingBlock.FACING;
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, VanillaAutomatedBlocks.placerBlockEntity, PlacerBlockEntity::tick);
     }
 }

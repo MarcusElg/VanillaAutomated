@@ -1,11 +1,12 @@
 package vanillaautomated;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
-import net.minecraft.block.MaterialColor;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -23,21 +24,7 @@ import vanillaautomated.gui.*;
 
 public class VanillaAutomatedBlocks {
 
-    public static final FabricBlockSettings machineBlockSettings = FabricBlockSettings.of(Material.METAL, MaterialColor.GRAY).strength(5.0F, 6.0F).sounds(BlockSoundGroup.METAL);
-
-    // Block entities
-    public static BlockEntityType<FisherBlockEntity> fisherBlockEntity;
-    public static BlockEntityType<CobblestoneGeneratorBlockEntity> cobblestoneGeneratorBlockEntity;
-    public static BlockEntityType<MagnetBlockEntity> magnetBlockEntity;
-    public static BlockEntityType<NullifierBlockEntity> nullifierBlockEntity;
-    public static BlockEntityType<TimerBlockEntity> timerBlockEntity;
-    public static BlockEntityType<MobFarmBlockEntity> mobFarmBlockEntity;
-    public static BlockEntityType<FarmerBlockEntity> farmerBlockEntity;
-    public static BlockEntityType<CrusherBlockEntity> crusherBlockEntity;
-    public static BlockEntityType<BreakerBlockEntity> breakerBlockEntity;
-    public static BlockEntityType<PlacerBlockEntity> placerBlockEntity;
-    public static BlockEntityType<CrafterBlockEntity> crafterBlockEntity;
-
+    public static final FabricBlockSettings machineBlockSettings = FabricBlockSettings.of(Material.METAL, MapColor.GRAY).strength(5.0F, 6.0F).sounds(BlockSoundGroup.METAL);
     // Blocks
     public static final Block machineBlock = new Block(machineBlockSettings);
     public static final FisherBlock fisherBlock = new FisherBlock(machineBlockSettings);
@@ -51,7 +38,18 @@ public class VanillaAutomatedBlocks {
     public static final BreakerBlock breakerBlock = new BreakerBlock(machineBlockSettings);
     public static final PlacerBlock placerBlock = new PlacerBlock(machineBlockSettings);
     public static final CrafterBlock crafterBlock = new CrafterBlock(machineBlockSettings);
-
+    // Block entities
+    public static BlockEntityType<FisherBlockEntity> fisherBlockEntity;
+    public static BlockEntityType<CobblestoneGeneratorBlockEntity> cobblestoneGeneratorBlockEntity;
+    public static BlockEntityType<MagnetBlockEntity> magnetBlockEntity;
+    public static BlockEntityType<NullifierBlockEntity> nullifierBlockEntity;
+    public static BlockEntityType<TimerBlockEntity> timerBlockEntity;
+    public static BlockEntityType<MobFarmBlockEntity> mobFarmBlockEntity;
+    public static BlockEntityType<FarmerBlockEntity> farmerBlockEntity;
+    public static BlockEntityType<CrusherBlockEntity> crusherBlockEntity;
+    public static BlockEntityType<BreakerBlockEntity> breakerBlockEntity;
+    public static BlockEntityType<PlacerBlockEntity> placerBlockEntity;
+    public static BlockEntityType<CrafterBlockEntity> crafterBlockEntity;
     // Screens
     public static ScreenHandlerType<FisherBlockController> fisherBlockScreen;
     public static ScreenHandlerType<CobblestoneGeneratorBlockController> cobblestoneGeneratorBlockScreen;
@@ -78,17 +76,17 @@ public class VanillaAutomatedBlocks {
 
     public static void register() {
         // Block entities
-        fisherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "fisher_block"), BlockEntityType.Builder.create(FisherBlockEntity::new, fisherBlock).build(null));
-        cobblestoneGeneratorBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), BlockEntityType.Builder.create(CobblestoneGeneratorBlockEntity::new, cobblestoneGeneratorBlock).build(null));
-        magnetBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "magnet_block"), BlockEntityType.Builder.create(MagnetBlockEntity::new, magnetBlock).build(null));
-        nullifierBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "nullifier"), BlockEntityType.Builder.create(NullifierBlockEntity::new, nullifierBlock).build(null));
-        timerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "timer"), BlockEntityType.Builder.create(TimerBlockEntity::new, timerBlock).build(null));
-        mobFarmBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "mob_farm_block"), BlockEntityType.Builder.create(MobFarmBlockEntity::new, mobFarmBlock).build(null));
-        farmerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "farmer_block"), BlockEntityType.Builder.create(FarmerBlockEntity::new, farmerBlock).build(null));
-        crusherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "crusher_block"), BlockEntityType.Builder.create(CrusherBlockEntity::new, crusherBlock).build(null));
-        breakerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "breaker_block"), BlockEntityType.Builder.create(BreakerBlockEntity::new, breakerBlock).build(null));
-        placerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "placer_block"), BlockEntityType.Builder.create(PlacerBlockEntity::new, placerBlock).build(null));
-        crafterBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "crafter_block"), BlockEntityType.Builder.create(CrafterBlockEntity::new, crafterBlock).build(null));
+        fisherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "fisher_block"), FabricBlockEntityTypeBuilder.create(FisherBlockEntity::new, fisherBlock).build(null));
+        cobblestoneGeneratorBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "cobblestone_generator_block"), FabricBlockEntityTypeBuilder.create(CobblestoneGeneratorBlockEntity::new, cobblestoneGeneratorBlock).build(null));
+        magnetBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "magnet_block"), FabricBlockEntityTypeBuilder.create(MagnetBlockEntity::new, magnetBlock).build(null));
+        nullifierBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "nullifier"), FabricBlockEntityTypeBuilder.create(NullifierBlockEntity::new, nullifierBlock).build(null));
+        timerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "timer"), FabricBlockEntityTypeBuilder.create(TimerBlockEntity::new, timerBlock).build(null));
+        mobFarmBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "mob_farm_block"), FabricBlockEntityTypeBuilder.create(MobFarmBlockEntity::new, mobFarmBlock).build(null));
+        farmerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "farmer_block"), FabricBlockEntityTypeBuilder.create(FarmerBlockEntity::new, farmerBlock).build(null));
+        crusherBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "crusher_block"), FabricBlockEntityTypeBuilder.create(CrusherBlockEntity::new, crusherBlock).build(null));
+        breakerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "breaker_block"), FabricBlockEntityTypeBuilder.create(BreakerBlockEntity::new, breakerBlock).build(null));
+        placerBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "placer_block"), FabricBlockEntityTypeBuilder.create(PlacerBlockEntity::new, placerBlock).build(null));
+        crafterBlockEntity = Registry.register(Registry.BLOCK_ENTITY_TYPE, new Identifier(VanillaAutomated.prefix, "crafter_block"), FabricBlockEntityTypeBuilder.create(CrafterBlockEntity::new, crafterBlock).build(null));
 
         // Blocks
         registerBlock(machineBlock, "machine_block");

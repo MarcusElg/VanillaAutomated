@@ -19,9 +19,9 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.*;
 import net.minecraft.screen.PropertyDelegate;
@@ -33,10 +33,11 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.CrafterBlockController;
@@ -45,21 +46,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
+public class CrafterBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, ExtendedScreenHandlerFactory {
 
+    private final PropertyDelegate propertyDelegate;
+    public int speed = 10;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     DefaultedList<Item> recipeItems = DefaultedList.ofSize(9, Items.AIR);
+    boolean firstTick = true;
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    public int speed = 10;
-    private final PropertyDelegate propertyDelegate;
     private String recipeString = "null";
     private CraftingRecipe currentRecipe = null;
-    boolean firstTick = true;
 
-    public CrafterBlockEntity() {
-        super(VanillaAutomatedBlocks.crafterBlockEntity);
+    public CrafterBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.crafterBlockEntity, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -102,6 +103,10 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         };
     }
 
+    public static boolean canUseAsFuel(ItemStack stack) {
+        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
+    }
+
     public DefaultedList<ItemStack> getItems() {
         return items;
     }
@@ -112,7 +117,7 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
 
     public void resetRecipe() {
         recipeItems = DefaultedList.ofSize(9, Items.AIR);
-        for(int i = 0; i < 9; ++i) {
+        for (int i = 0; i < 9; ++i) {
             ItemScatterer.spawn(world, getPos().getX(), getPos().getY(), getPos().getZ(), getStack(i + 1));
             items.set(i + 1, ItemStack.EMPTY);
         }
@@ -212,10 +217,10 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
-        recipeItemsFromTag(tag, recipeItems);
+    public void readNbt( NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
+        recipeItemsreadNbt(tag, recipeItems);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -230,9 +235,9 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        recipeItemsToTag(tag, recipeItems);
-        Inventories.toTag(tag, items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        recipeItemswriteNbt(tag, recipeItems);
+        Inventories.writeNbt(tag, items);
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
@@ -240,15 +245,15 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
-        tag.putShort("Speed", (short)this.speed);
-        return super.toTag(tag);
+        tag.putShort("Speed", (short) this.speed);
+        return super.writeNbt(tag);
     }
 
-    public CompoundTag recipeItemsToTag(CompoundTag tag, DefaultedList<Item> itemList) {
-        ListTag listTag = new ListTag();
+    public NbtCompound recipeItemswriteNbt(NbtCompound tag, DefaultedList<Item> itemList) {
+        NbtList listTag = new NbtList();
 
         for (int i = 0; i < itemList.size(); ++i) {
-            listTag.add(i, StringTag.of(Registry.ITEM.getId(itemList.get(i)).toString()));
+            listTag.add(i, NbtString.of(Registry.ITEM.getId(itemList.get(i)).toString()));
         }
 
         if (!listTag.isEmpty()) {
@@ -258,8 +263,8 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         return tag;
     }
 
-    public void recipeItemsFromTag(CompoundTag tag, DefaultedList<Item> itemList) {
-        ListTag listTag = tag.getList("RecipeItems", 8);
+    public void recipeItemsreadNbt(NbtCompound tag, DefaultedList<Item> itemList) {
+        NbtList listTag = tag.getList("RecipeItems", 8);
 
         for (int i = 0; i < listTag.size(); ++i) {
             String item = listTag.getString(i);
@@ -267,70 +272,70 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
         }
     }
 
-    public void tick() {
+    public static void tick(World world, BlockPos blockPos, BlockState blockState, CrafterBlockEntity t) {
         if (world.isClient) {
             return;
         }
 
-        if (firstTick) {
-            if (!recipeString.equals("null") && !recipeString.isEmpty()) {
-                this.currentRecipe = (CraftingRecipe) world.getRecipeManager().get(Identifier.tryParse(recipeString)).get();
-                firstTick = false;
+        if (t.firstTick) {
+            if (!t.recipeString.equals("null") && !t.recipeString.isEmpty()) {
+                t.currentRecipe = (CraftingRecipe) world.getRecipeManager().get(Identifier.tryParse(t.recipeString)).get();
+                t.firstTick = false;
             }
         }
 
-        if (this.isBurning()) {
-            this.fuelTime--;
+        if (t.isBurning()) {
+            t.fuelTime--;
         }
 
         // Freeze when powered
-        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
-            this.processingTime = 0;
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+            t.processingTime = 0;
             return;
         }
 
-        if (currentRecipe == null) {
+        if (t.currentRecipe == null) {
             return;
         }
 
         boolean changed = false;
-        if (this.isBurning()) {
-            this.processingTime++;
+        if (t.isBurning()) {
+            t.processingTime++;
         }
 
-        ItemStack itemStack = this.items.get(0);
-        if (canAcceptOutput(currentRecipe)) {
+        ItemStack itemStack = t.items.get(0);
+        if (t.canAcceptOutput(t.currentRecipe)) {
             // Burn another item
-            if (!this.isBurning()) {
+            if (!t.isBurning()) {
                 if (!itemStack.isEmpty()) {
-                    this.maxFuelTime = this.getFuelTime(itemStack);
-                    this.fuelTime = this.maxFuelTime;
+                    t.maxFuelTime = t.getFuelTime(itemStack);
+                    t.fuelTime = t.maxFuelTime;
                     changed = true;
 
                     Item item = itemStack.getItem();
                     itemStack.decrement(1);
                     if (itemStack.isEmpty()) {
                         Item item2 = item.getRecipeRemainder();
-                        this.items.set(0, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                        t.items.set(0, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                     }
                 } else {
-                    this.processingTime = 0;
+                    t.processingTime = 0;
                 }
             }
 
             // Generate items
-            if (this.processingTime == speed) {
-                this.processingTime = 0;
-                this.craftItem(currentRecipe);
-                updateCurrentRecipe();
+            if (t.processingTime == t.speed) {
+                t.processingTime = 0;
+                t.craftItem(t.currentRecipe);
+                t.updateCurrentRecipe();
                 changed = true;
             }
         } else {
-            processingTime = 0;
+            t.processingTime = 0;
         }
 
         if (changed) {
-            this.markDirty();
+            t.markDirty();
         }
     }
 
@@ -407,9 +412,9 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
                 Ingredient ingredient = Ingredient.EMPTY;
                 if (k >= 0 && l >= 0 && k < recipe.getWidth() && l < recipe.getHeight()) {
                     if (bl) {
-                        ingredient = recipe.getPreviewInputs().get(recipe.getWidth() - k - 1 + l * recipe.getWidth());
+                        ingredient = recipe.getIngredients().get(recipe.getWidth() - k - 1 + l * recipe.getWidth());
                     } else {
-                        ingredient = recipe.getPreviewInputs().get(k + l * recipe.getWidth());
+                        ingredient = recipe.getIngredients().get(k + l * recipe.getWidth());
                     }
                 }
 
@@ -423,18 +428,19 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     private boolean checkShapeless(ShapelessRecipe shapelessRecipe) {
-        RecipeFinder recipeFinder = new RecipeFinder();
+        RecipeMatcher recipeFinder = new RecipeMatcher();
+
         int i = 0;
 
         for (int j = 0; j < 9; ++j) {
             ItemStack itemStack = new ItemStack(recipeItems.get(j));
             if (!itemStack.isEmpty()) {
                 ++i;
-                recipeFinder.method_20478(itemStack, 1);
+                recipeFinder.addInput(itemStack, 1);
             }
         }
 
-        return i == shapelessRecipe.getPreviewInputs().size() && recipeFinder.findRecipe(shapelessRecipe, (IntList) null);
+        return i == shapelessRecipe.getIngredients().size() && recipeFinder.match(shapelessRecipe, (IntList) null);
     }
 
     private void craftItem(CraftingRecipe craftingRecipe) {
@@ -458,10 +464,6 @@ public class CrafterBlockEntity extends MachineBlockEntity implements SidedInven
             Item item = fuel.getItem();
             return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
-    }
-
-    public static boolean canUseAsFuel(ItemStack stack) {
-        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public int[] getAvailableSlots(Direction side) {

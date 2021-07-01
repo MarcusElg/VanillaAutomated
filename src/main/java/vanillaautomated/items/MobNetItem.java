@@ -15,7 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
@@ -45,17 +45,17 @@ public class MobNetItem extends Item {
         }
 
         // Capture mob
-        CompoundTag tag = stack.getOrCreateTag();
+        NbtCompound tag = stack.getOrCreateTag();
         tag.putString("EntityId", Registry.ENTITY_TYPE.getId(entity.getType()).toString());
 
-        CompoundTag entityData = new CompoundTag();
-        entity.saveSelfToTag(entityData);
+        NbtCompound entityData = new NbtCompound();
+        entity.saveSelfNbt(entityData);
         entityData.remove("UUID");
 
         tag.put("EntityData", entityData);
         stack.setTag(tag);
         user.setStackInHand(hand, stack);
-        entity.remove();
+        entity.remove(Entity.RemovalReason.valueOf("Caught with net"));
         return ActionResult.SUCCESS;
     }
 
@@ -67,8 +67,8 @@ public class MobNetItem extends Item {
             return ActionResult.PASS;
         } else {
             // Release mob
-            CompoundTag tag = itemStack.getTag();
-            CompoundTag entityData = tag.getCompound("EntityData");
+            NbtCompound tag = itemStack.getTag();
+            NbtCompound entityData = tag.getCompound("EntityData");
             entityData.remove("Passengers");
             entityData.remove("Leash");
             entityData.remove("UUID");
@@ -97,8 +97,10 @@ public class MobNetItem extends Item {
 
             // Spawn entity
             if (entity != null) {
-                entity.resetPosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
+                // entity.resetPosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
                 entity.updatePosition(position.getX() + 0.5f, position.getY() + 0.5f, position.getZ() + 0.5f);
+                entity.resetPosition();
+                // moved reset position under update
             }
             context.getWorld().spawnEntity(entity);
 

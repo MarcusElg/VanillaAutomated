@@ -30,12 +30,13 @@ public class WItemSprite extends WWidget {
     public ItemStack getItem () {
         return itemStack;
     }
-
+   /*
     @Override
     @Environment(EnvType.CLIENT)
-    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
-        renderGuiItemModel(itemStack, x + 1, y + 1, MinecraftClient.getInstance().getItemRenderer().getHeldItemModel(itemStack, (World)null, null));
+    public void paint(MatrixStack matrices, int x, int y, int mouseX, int mouseY) { // ItemStack stack, @Nullable World world, @Nullable LivingEntity entity, int seed
+        renderGuiItemModel(itemStack, x + 1, y + 1, MinecraftClient.getInstance().getItemRenderer().getHeldItemModel(itemStack, (World)null, null, 0));
     }
+
 
     // Modified method from ItemRenderer
     @Environment(EnvType.CLIENT)
@@ -73,4 +74,6 @@ public class WItemSprite extends WWidget {
         RenderSystem.disableRescaleNormal();
         RenderSystem.popMatrix();
     }
+
+     */
 }

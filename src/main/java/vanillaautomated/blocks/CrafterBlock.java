@@ -5,6 +5,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -16,8 +18,10 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 import vanillaautomated.blockentities.CrafterBlockEntity;
 
 import java.util.Random;
@@ -71,8 +75,8 @@ public class CrafterBlock extends MachineBlock {
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new CrafterBlockEntity();
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new CrafterBlockEntity(pos, state);
     }
 
     @Environment(EnvType.CLIENT)
@@ -80,5 +84,11 @@ public class CrafterBlock extends MachineBlock {
         if (((CrafterBlockEntity) world.getBlockEntity(pos)).isBurning()) {
             super.particles(state, world, pos, random);
         }
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, VanillaAutomatedBlocks.crafterBlockEntity, CrafterBlockEntity::tick);
     }
 }

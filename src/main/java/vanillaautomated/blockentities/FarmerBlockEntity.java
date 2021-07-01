@@ -11,7 +11,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -19,31 +19,32 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.FarmerBlockController;
 import vanillaautomated.recipes.FarmerRecipe;
 
-public class FarmerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder {
+public class FarmerBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
-    DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
-    private int processingTime;
-    private int fuelTime;
-    private int maxFuelTime;
+    private final PropertyDelegate propertyDelegate;
     public int speed = 2400;
     public int setSpeed = 2400;
     public int spedUpSpeed = 20;
-    private final PropertyDelegate propertyDelegate;
     public boolean spedUp = false; // Used bonemeal
+    DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
+    boolean firstTick = true;
+    private int processingTime;
+    private int fuelTime;
+    private int maxFuelTime;
     private String recipeString = "null";
     private FarmerRecipe currentRecipe = null;
-    boolean firstTick = true;
 
-    public FarmerBlockEntity() {
-        super(VanillaAutomatedBlocks.farmerBlockEntity);
+    public FarmerBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.farmerBlockEntity, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -84,6 +85,10 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
                 return 4;
             }
         };
+    }
+
+    public static boolean canUseAsFuel(ItemStack stack) {
+        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -151,9 +156,9 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -175,8 +180,8 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        Inventories.writeNbt(tag, items);
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
@@ -185,77 +190,77 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putBoolean("SpedUp", this.spedUp);
         tag.putString("CurrentRecipe", currentRecipe == null ? "null" : this.currentRecipe.getId().toString());
-        tag.putShort("Speed", (short)this.setSpeed);
-        tag.putShort("SpedUpSpeed", (short)this.spedUpSpeed);
-        return super.toTag(tag);
+        tag.putShort("Speed", (short) this.setSpeed);
+        tag.putShort("SpedUpSpeed", (short) this.spedUpSpeed);
+        return super.writeNbt(tag);
     }
 
-    public void tick() {
+    public static void tick(World world, BlockPos blockPos, BlockState blockState, FarmerBlockEntity t) {
         if (world.isClient) {
             return;
         }
 
-        if (firstTick) {
-            if (!recipeString.equals("null") && !recipeString.isEmpty()) {
-                this.currentRecipe = (FarmerRecipe) world.getRecipeManager().get(Identifier.tryParse(recipeString)).get();
-                firstTick = false;
+        if (t.firstTick) {
+            if (!t.recipeString.equals("null") && !t.recipeString.isEmpty()) {
+                t.currentRecipe = (FarmerRecipe) world.getRecipeManager().get(Identifier.tryParse(t.recipeString)).get();
+                t.firstTick = false;
             }
         }
 
         boolean changed = false;
-        if (this.isBurning()) {
-            this.fuelTime--;
+        if (t.isBurning()) {
+            t.fuelTime--;
         }
 
         // Freeze when powered
-        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
             return;
         }
 
-        ItemStack itemStack = this.items.get(2);
-        if (this.canAcceptOutput(currentRecipe) && !this.items.get(0).isEmpty()) {
+        ItemStack itemStack = t.items.get(2);
+        if (t.canAcceptOutput(t.currentRecipe) && !t.items.get(0).isEmpty()) {
             // Burn another item
-            if (!this.isBurning()) {
+            if (!t.isBurning()) {
                 if (!itemStack.isEmpty()) {
-                    this.maxFuelTime = this.getFuelTime(itemStack);
-                    this.fuelTime = this.maxFuelTime;
+                    t.maxFuelTime = t.getFuelTime(itemStack);
+                    t.fuelTime = t.maxFuelTime;
                     changed = true;
 
                     Item item = itemStack.getItem();
                     itemStack.decrement(1);
                     if (itemStack.isEmpty()) {
                         Item item2 = item.getRecipeRemainder();
-                        this.items.set(2, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                        t.items.set(2, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                     }
                 } else {
-                    this.processingTime = 0;
+                    t.processingTime = 0;
                 }
             }
 
-            if (currentRecipe == null) {
-                processingTime = 0;
+            if (t.currentRecipe == null) {
+                t.processingTime = 0;
                 return;
             } else {
-                if (isBurning()) {
-                    processingTime++;
-                    updateSpeed();
+                if (t.isBurning()) {
+                    t.processingTime++;
+                    t.updateSpeed();
                 }
             }
 
             // Generate items
-            if (this.processingTime >= speed) {
-                this.processingTime = 0;
-                this.generateItems(currentRecipe);
-                spedUp = false;
+            if (t.processingTime >= t.speed) {
+                t.processingTime = 0;
+                t.generateItems(t.currentRecipe);
+                t.spedUp = false;
 
                 changed = true;
             }
         } else {
-            this.processingTime = 0;
+            t.processingTime = 0;
         }
 
         if (changed) {
-            this.markDirty();
+            t.markDirty();
         }
     }
 
@@ -288,7 +293,7 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
         return (items.get(3).getCount() + recipe.getOutput().getCount()) <= 64;
     }
 
-    private void updateCurrentRecipe () {
+    private void updateCurrentRecipe() {
         currentRecipe = (FarmerRecipe) this.world.getRecipeManager().getFirstMatch(VanillaAutomated.farmerRecipeType, this, this.world).orElse((Object) null);
     }
 
@@ -310,10 +315,6 @@ public class FarmerBlockEntity extends MachineBlockEntity implements SidedInvent
             Item item = fuel.getItem();
             return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
-    }
-
-    public static boolean canUseAsFuel(ItemStack stack) {
-        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public int[] getAvailableSlots(Direction side) {

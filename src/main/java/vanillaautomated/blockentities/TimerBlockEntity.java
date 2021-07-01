@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -13,18 +13,18 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
-import net.minecraft.util.Tickable;
+import net.minecraft.util.math.BlockPos;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.TimerController;
 
-public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Tickable, ExtendedScreenHandlerFactory {
+public class TimerBlockEntity extends MachineBlockEntity implements Nameable, ExtendedScreenHandlerFactory {
     private int currentTime = 0;
     private int time = 20;
     private boolean disabled = false;
 
-    public TimerBlockEntity() {
-        super(VanillaAutomatedBlocks.timerBlockEntity);
+    public TimerBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.timerBlockEntity, pos, state);
     }
 
     public void modifyTime(int time) {
@@ -38,8 +38,8 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ti
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -48,13 +48,13 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ti
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
         tag.putInt("CurrentTime", this.currentTime);
         tag.putInt("Time", this.time);
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     @Override
@@ -62,7 +62,6 @@ public class TimerBlockEntity extends MachineBlockEntity implements Nameable, Ti
         return new TranslatableText("block." + VanillaAutomated.prefix + ".timer");
     }
 
-    @Override
     public void tick() {
         if (world.isClient()) {
             return;

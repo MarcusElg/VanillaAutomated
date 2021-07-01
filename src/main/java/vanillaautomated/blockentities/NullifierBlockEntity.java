@@ -6,20 +6,21 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.NullifierController;
 
 public class NullifierBlockEntity extends MachineBlockEntity implements Inventory, Nameable {
-    public NullifierBlockEntity() {
-        super(VanillaAutomatedBlocks.nullifierBlockEntity);
+    public NullifierBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.nullifierBlockEntity, pos, state);
     }
 
     DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
@@ -69,19 +70,19 @@ public class NullifierBlockEntity extends MachineBlockEntity implements Inventor
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        Inventories.readNbt(tag, items);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound writeNbt(NbtCompound tag) {
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
-        return super.toTag(tag);
+        return super.writeNbt(tag);
     }
 
     @Override

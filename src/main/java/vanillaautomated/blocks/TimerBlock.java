@@ -20,14 +20,19 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
+import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blockentities.TimerBlockEntity;
 
 import java.util.Random;
 
 public class TimerBlock extends BlockWithEntity {
-    protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
     public static final BooleanProperty ENABLED;
+    protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
+
+    static {
+        ENABLED = Properties.ENABLED;
+    }
 
     public TimerBlock(Settings settings) {
         super(settings);
@@ -81,7 +86,7 @@ public class TimerBlock extends BlockWithEntity {
     }
 
     public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        if (!(Boolean)state.get(ENABLED)) {
+        if (!(Boolean) state.get(ENABLED)) {
             return 0;
         } else {
             return 15;
@@ -94,24 +99,24 @@ public class TimerBlock extends BlockWithEntity {
 
     @Environment(EnvType.CLIENT)
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if ((Boolean)state.get(ENABLED)) {
-            double d = (double)((float)pos.getX() + 0.5F) + (double)(random.nextFloat() - 0.5F) * 0.02D;
-            double e = (double)((float)pos.getY() + 0.4F) + (double)(random.nextFloat() - 0.5F) * 0.02D;
-            double f = (double)((float)pos.getZ() + 0.5F) + (double)(random.nextFloat() - 0.5F) * 0.02D;
+        if ((Boolean) state.get(ENABLED)) {
+            double d = (double) ((float) pos.getX() + 0.5F) + (double) (random.nextFloat() - 0.5F) * 0.02D;
+            double e = (double) ((float) pos.getY() + 0.4F) + (double) (random.nextFloat() - 0.5F) * 0.02D;
+            double f = (double) ((float) pos.getZ() + 0.5F) + (double) (random.nextFloat() - 0.5F) * 0.02D;
             int randomInt = random.nextInt(4);
 
             switch (randomInt) {
                 case 0:
-                    world.addParticle(DustParticleEffect.RED, d + 0.25f, e, f, 0.0D, 0.0D, 0.0D);
+                    world.addParticle(DustParticleEffect.DEFAULT, d + 0.25f, e, f, 0.0D, 0.0D, 0.0D);
                     break;
                 case 1:
-                    world.addParticle(DustParticleEffect.RED, d, e, f + 0.25f, 0.0D, 0.0D, 0.0D);
+                    world.addParticle(DustParticleEffect.DEFAULT, d, e, f + 0.25f, 0.0D, 0.0D, 0.0D);
                     break;
                 case 2:
-                    world.addParticle(DustParticleEffect.RED, d - 0.25f, e, f, 0.0D, 0.0D, 0.0D);
+                    world.addParticle(DustParticleEffect.DEFAULT, d - 0.25f, e, f, 0.0D, 0.0D, 0.0D);
                     break;
                 case 3:
-                    world.addParticle(DustParticleEffect.RED, d, e, f - 0.25f, 0.0D, 0.0D, 0.0D);
+                    world.addParticle(DustParticleEffect.DEFAULT, d, e, f - 0.25f, 0.0D, 0.0D, 0.0D);
                     break;
             }
         }
@@ -131,16 +136,13 @@ public class TimerBlock extends BlockWithEntity {
         }
     }
 
+    @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new TimerBlockEntity();
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new TimerBlockEntity(pos, state);
     }
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(ENABLED);
-    }
-
-    static {
-        ENABLED = Properties.ENABLED;
     }
 }

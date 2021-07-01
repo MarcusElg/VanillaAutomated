@@ -16,7 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -25,9 +25,10 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.VanillaAutomatedItems;
@@ -36,19 +37,19 @@ import vanillaautomated.gui.MobFarmBlockController;
 import java.util.List;
 import java.util.Random;
 
-public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, Nameable, Tickable {
+public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, Nameable {
 
+    private final PropertyDelegate propertyDelegate;
+    public int speed = 400;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(11, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    public int speed = 400;
     private Random random = new Random();
-    private final PropertyDelegate propertyDelegate;
     private String entityType = "";
 
-    public MobFarmBlockEntity() {
-        super(VanillaAutomatedBlocks.mobFarmBlockEntity);
+    public MobFarmBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.mobFarmBlockEntity, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -89,6 +90,10 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
                 return 4;
             }
         };
+    }
+
+    public static boolean canUseAsFuel(ItemStack stack) {
+        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     private void updateEntityType() {
@@ -171,9 +176,9 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -189,8 +194,8 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        Inventories.writeNbt(tag, items);
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
@@ -198,67 +203,67 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
         tag.putString("EntityType", this.entityType);
-        tag.putShort("Speed", (short)this.speed);
-        return super.toTag(tag);
+        tag.putShort("Speed", (short) this.speed);
+        return super.writeNbt(tag);
     }
 
-    public void tick() {
+    public static void tick(World world, BlockPos blockPos, BlockState blockState, MobFarmBlockEntity t) {
         if (world.isClient) {
             return;
         }
 
-        if (entityType == "") {
-            processingTime = 0;
+        if (t.entityType.equals("")) {
+            t.processingTime = 0;
             return;
         }
 
         // Freeze when powered
-        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
-            if (this.isBurning()) {
-                this.fuelTime--;
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+            if (t.isBurning()) {
+                t.fuelTime--;
             }
 
             return;
         }
 
         boolean changed = false;
-        if (this.isBurning()) {
-            this.processingTime++;
-            this.fuelTime--;
+        if (t.isBurning()) {
+            t.processingTime++;
+            t.fuelTime--;
         }
 
-        ItemStack itemStack = this.items.get(1);
-        if (this.canAcceptOutput()) {
+        ItemStack itemStack = t.items.get(1);
+        if (t.canAcceptOutput()) {
             // Burn another item
-            if (!this.isBurning()) {
+            if (!t.isBurning()) {
                 if (!itemStack.isEmpty()) {
-                    this.maxFuelTime = this.getFuelTime(itemStack);
-                    this.fuelTime = this.maxFuelTime;
+                    t.maxFuelTime = t.getFuelTime(itemStack);
+                    t.fuelTime = t.maxFuelTime;
                     changed = true;
 
                     Item item = itemStack.getItem();
                     itemStack.decrement(1);
                     if (itemStack.isEmpty()) {
                         Item item2 = item.getRecipeRemainder();
-                        this.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                        t.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                     }
                 } else {
-                    this.processingTime = 0;
+                    t.processingTime = 0;
                 }
             }
 
             // Generate items
-            if (this.processingTime == speed) {
-                this.processingTime = 0;
-                this.generateItems();
+            if (t.processingTime == t.speed) {
+                t.processingTime = 0;
+                t.generateItems();
                 changed = true;
             }
         } else {
-            this.processingTime = 0;
+            t.processingTime = 0;
         }
 
         if (changed) {
-            this.markDirty();
+            t.markDirty();
         }
     }
 
@@ -282,7 +287,7 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
             return;
         }
 
-        CompoundTag entityData = items.get(0).getTag().getCompound("EntityData");
+        NbtCompound entityData = items.get(0).getTag().getCompound("EntityData");
         LivingEntity entity = (LivingEntity) EntityType.loadEntityWithPassengers(entityData, world, (entityx) -> {
             return entityx;
         });
@@ -318,10 +323,6 @@ public class MobFarmBlockEntity extends MachineBlockEntity implements SidedInven
             Item item = fuel.getItem();
             return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
-    }
-
-    public static boolean canUseAsFuel(ItemStack stack) {
-        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public int[] getAvailableSlots(Direction side) {

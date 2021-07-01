@@ -19,7 +19,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -27,7 +27,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -40,18 +39,18 @@ import vanillaautomated.gui.BreakerBlockController;
 import java.util.List;
 import java.util.Random;
 
-public class BreakerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder {
+public class BreakerBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
+    private final PropertyDelegate propertyDelegate;
+    public int speed = 10;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    public int speed = 10;
     private Random random = new Random();
-    private final PropertyDelegate propertyDelegate;
 
-    public BreakerBlockEntity() {
-        super(VanillaAutomatedBlocks.breakerBlockEntity);
+    public BreakerBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.breakerBlockEntity, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -92,6 +91,10 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
                 return 4;
             }
         };
+    }
+
+    public static boolean canUseAsFuel(ItemStack stack) {
+        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -153,9 +156,9 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -169,16 +172,16 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        Inventories.writeNbt(tag, items);
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putShort("Speed", (short)this.speed);
-        return super.toTag(tag);
+        tag.putShort("Speed", (short) this.speed);
+        return super.writeNbt(tag);
     }
 
     public void tick() {
@@ -193,7 +196,10 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
             this.fuelTime--;
         }
 
-        if (world.getBlockState(position).isAir() || world.getBlockState(position).getHardness(world, position) > 16000000 || world.getBlockState(position).getHardness(world, position) == -1 || world.getBlockState(position).getBlock().hasBlockEntity()) {
+        if (world.getBlockState(position).isAir() ||
+                world.getBlockState(position).getHardness(world, position) > 16000000 ||
+                world.getBlockState(position).getHardness(world, position) == -1 ||
+                world.getBlockState(position).hasBlockEntity()) {
             this.processingTime = 0;
             return;
         }
@@ -254,7 +260,7 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
         if (!items.get(0).isEmpty()) {
             MiningToolItem miningToolItem = (MiningToolItem) items.get(0).getItem();
 
-            if (miningToolItem.isEffectiveOn(world.getBlockState(position))) {
+            if (miningToolItem.isSuitableFor(world.getBlockState(position))) {
                 items.get(0).damage(1, random, null);
             } else {
                 items.get(0).damage(3, random, null);
@@ -282,10 +288,6 @@ public class BreakerBlockEntity extends MachineBlockEntity implements SidedInven
             Item item = fuel.getItem();
             return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
-    }
-
-    public static boolean canUseAsFuel(ItemStack stack) {
-        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public int[] getAvailableSlots(Direction side) {

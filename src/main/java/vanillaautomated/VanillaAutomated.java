@@ -1,8 +1,6 @@
 package vanillaautomated;
 
 import com.google.gson.Gson;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -59,8 +57,7 @@ public class VanillaAutomated implements ModInitializer {
     @Override
     public void onInitialize() {
         // Config
-        AutoConfig.register(VanillaAutomatedConfig.class, JanksonConfigSerializer::new);
-        config = AutoConfig.getConfigHolder(VanillaAutomatedConfig.class).getConfig();
+
 
         VanillaAutomatedBlocks.register();
         VanillaAutomatedItems.register();

@@ -21,6 +21,9 @@
     ],
     "client": [
       "vanillaautomated.VanillaAutomatedClient"
+    ],
+    "modmenu": [
+      "vanillaautomated.config.VanillaAutomatedConfig"
     ]
   },
   "mixins": [

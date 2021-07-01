@@ -4,6 +4,7 @@ import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -11,34 +12,35 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.gui.CobblestoneGeneratorBlockController;
 
 import java.util.Random;
 
-public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder {
+public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder {
 
+    private final PropertyDelegate propertyDelegate;
+    public int speed = 20; // TODO: config file
     DefaultedList<ItemStack> items = DefaultedList.ofSize(4, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    public int speed = 20; // TODO: config file
     private Random random = new Random();
-    private final PropertyDelegate propertyDelegate;
 
-    public CobblestoneGeneratorBlockEntity() {
-        super(VanillaAutomatedBlocks.cobblestoneGeneratorBlockEntity);
+    public CobblestoneGeneratorBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.cobblestoneGeneratorBlockEntity, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -79,6 +81,71 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
                 return 4;
             }
         };
+    }
+
+    public static boolean canUseAsFuel(ItemStack stack) {
+        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
+    }
+
+    public static void tick(World world, BlockPos blockPos, BlockState blockState, CobblestoneGeneratorBlockEntity t) {
+
+        if (world.isClient) {
+            return;
+        }
+
+        if (t.getItems().get(0).isEmpty() || t.getItems().get(1).isEmpty()) {
+            t.setProcessingTime(0);
+            return;
+        }
+
+        // Freeze when powered
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+            if (t.isBurning()) {
+                t.fuelTime--;
+            }
+
+            return;
+        }
+
+        boolean changed = false;
+        if (t.isBurning()) {
+            t.processingTime++;
+            t.fuelTime--;
+        }
+
+        ItemStack itemStack = t.items.get(2);
+        if (t.canAcceptOutput()) {
+            // Burn another item
+            if (!t.isBurning()) {
+                if (!itemStack.isEmpty()) {
+                    t.maxFuelTime = t.getFuelTime(itemStack);
+                    t.fuelTime = t.maxFuelTime;
+                    changed = true;
+
+                    Item item = itemStack.getItem();
+                    itemStack.decrement(1);
+                    if (itemStack.isEmpty()) {
+                        Item item2 = item.getRecipeRemainder();
+                        t.items.set(2, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                    }
+                } else {
+                    t.processingTime = 0;
+                }
+            }
+
+            // Generate items
+            if (t.processingTime == t.speed) {
+                t.processingTime = 0;
+                t.generateItems();
+                changed = true;
+            }
+        } else {
+            t.processingTime = 0;
+        }
+
+        if (changed) {
+            t.markDirty();
+        }
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -144,9 +211,9 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -160,76 +227,20 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        Inventories.writeNbt(tag, items);
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putShort("Speed", (short)this.speed);
-        return super.toTag(tag);
+        tag.putShort("Speed", (short) this.speed);
+        return super.writeNbt(tag);
     }
 
-    public void tick() {
-        if (world.isClient) {
-            return;
-        }
-
-        if (items.get(0).isEmpty() || items.get(1).isEmpty()) {
-            this.processingTime = 0;
-            return;
-        }
-
-        // Freeze when powered
-        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
-            if (this.isBurning()) {
-                this.fuelTime--;
-            }
-
-            return;
-        }
-
-        boolean changed = false;
-        if (this.isBurning()) {
-            this.processingTime++;
-            this.fuelTime--;
-        }
-
-        ItemStack itemStack = this.items.get(2);
-        if (this.canAcceptOutput()) {
-            // Burn another item
-            if (!this.isBurning()) {
-                if (!itemStack.isEmpty()) {
-                    this.maxFuelTime = this.getFuelTime(itemStack);
-                    this.fuelTime = this.maxFuelTime;
-                    changed = true;
-
-                    Item item = itemStack.getItem();
-                    itemStack.decrement(1);
-                    if (itemStack.isEmpty()) {
-                        Item item2 = item.getRecipeRemainder();
-                        this.items.set(2, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
-                    }
-                } else {
-                    this.processingTime = 0;
-                }
-            }
-
-            // Generate items
-            if (this.processingTime == speed) {
-                this.processingTime = 0;
-                this.generateItems();
-                changed = true;
-            }
-        } else {
-            this.processingTime = 0;
-        }
-
-        if (changed) {
-            this.markDirty();
-        }
+    public void setProcessingTime(int processingTime) {
+        this.processingTime = processingTime;
     }
 
     private boolean canAcceptOutput() {
@@ -255,10 +266,6 @@ public class CobblestoneGeneratorBlockEntity extends MachineBlockEntity implemen
             Item item = fuel.getItem();
             return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
-    }
-
-    public static boolean canUseAsFuel(ItemStack stack) {
-        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public int[] getAvailableSlots(Direction side) {

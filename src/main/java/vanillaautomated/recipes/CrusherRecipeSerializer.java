@@ -27,10 +27,10 @@ public class CrusherRecipeSerializer implements RecipeSerializer<CrusherRecipe> 
             throw new JsonSyntaxException("A required attribute is missing!");
         }
         // We'll allow to not specify the output, and default it to 1.
-        if (ShapedRecipe.getItemStack(recipeJson.result).getCount() == 0) ShapedRecipe.getItemStack(recipeJson.result).setCount(1);
+        if (ShapedRecipe.outputFromJson(recipeJson.result).getCount() == 0) ShapedRecipe.outputFromJson(recipeJson.result).setCount(1);
 
         Ingredient input = Ingredient.fromJson(recipeJson.ingredient);
-        ItemStack output = ShapedRecipe.getItemStack(JsonHelper.getObject(json, "result"));
+        ItemStack output = ShapedRecipe.outputFromJson(JsonHelper.getObject(json, "result"));
 
         return new CrusherRecipe(input, output, id);
     }

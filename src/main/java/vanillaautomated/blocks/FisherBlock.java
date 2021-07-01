@@ -7,6 +7,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HorizontalFacingBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -23,8 +25,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import org.jetbrains.annotations.Nullable;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
+import vanillaautomated.blockentities.CobblestoneGeneratorBlockEntity;
 import vanillaautomated.blockentities.FisherBlockEntity;
 
 import java.util.Random;
@@ -33,14 +37,18 @@ public class FisherBlock extends MachineBlock {
 
     public static final DirectionProperty FACING;
 
+    static {
+        FACING = HorizontalFacingBlock.FACING;
+    }
+
     public FisherBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH).with(POWERED, false));
     }
 
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new FisherBlockEntity();
+    public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return new FisherBlockEntity(pos, state);
     }
 
     @Override
@@ -98,8 +106,8 @@ public class FisherBlock extends MachineBlock {
         return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
     }
 
-    private void checkForWater (WorldAccess world, BlockState state, BlockPos pos) {
-        FisherBlockEntity blockEntity = (FisherBlockEntity)world.getBlockEntity(pos);
+    private void checkForWater(WorldAccess world, BlockState state, BlockPos pos) {
+        FisherBlockEntity blockEntity = (FisherBlockEntity) world.getBlockEntity(pos);
         Direction direction1 = (Direction) state.get(FACING);
         pos = new BlockPos(pos.getX() + direction1.getOffsetX(), pos.getY() + direction1.getOffsetY(), pos.getZ() + direction1.getOffsetZ());
 
@@ -120,7 +128,9 @@ public class FisherBlock extends MachineBlock {
         builder.add(FACING).add(POWERED);
     }
 
-    static {
-        FACING = HorizontalFacingBlock.FACING;
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, VanillaAutomatedBlocks.fisherBlockEntity, FisherBlockEntity::tick);
     }
 }

@@ -29,7 +29,7 @@ public class FarmerRecipeSerializer implements RecipeSerializer<FarmerRecipe> {
         }
 
         Ingredient input = Ingredient.fromJson(recipeJson.ingredient);
-        ItemStack output = ShapedRecipe.getItemStack(JsonHelper.getObject(json, "result"));
+        ItemStack output = ShapedRecipe.outputFromJson(JsonHelper.getObject(json, "result"));
 
         return new FarmerRecipe(input, output, id);
     }

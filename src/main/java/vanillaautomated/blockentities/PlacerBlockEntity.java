@@ -2,10 +2,7 @@ package vanillaautomated.blockentities;
 
 import blue.endless.jankson.annotation.Nullable;
 import io.github.cottonmc.cotton.gui.PropertyDelegateHolder;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FacingBlock;
-import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -15,7 +12,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -23,10 +20,10 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Nameable;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 import vanillaautomated.VanillaAutomated;
 import vanillaautomated.VanillaAutomatedBlocks;
 import vanillaautomated.blocks.PlacerBlock;
@@ -34,18 +31,18 @@ import vanillaautomated.gui.PlacerBlockController;
 
 import java.util.Random;
 
-public class PlacerBlockEntity extends MachineBlockEntity implements SidedInventory, Tickable, PropertyDelegateHolder, Nameable {
+public class PlacerBlockEntity extends MachineBlockEntity implements SidedInventory, PropertyDelegateHolder, Nameable {
 
+    private final PropertyDelegate propertyDelegate;
+    public int speed = 10;
     DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
     private int processingTime;
     private int fuelTime;
     private int maxFuelTime;
-    public int speed = 10;
     private Random random = new Random();
-    private final PropertyDelegate propertyDelegate;
 
-    public PlacerBlockEntity() {
-        super(VanillaAutomatedBlocks.placerBlockEntity);
+    public PlacerBlockEntity(BlockPos pos, BlockState state) {
+        super(VanillaAutomatedBlocks.placerBlockEntity, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             public int get(int index) {
                 switch (index) {
@@ -86,6 +83,10 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
                 return 4;
             }
         };
+    }
+
+    public static boolean canUseAsFuel(ItemStack stack) {
+        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public DefaultedList<ItemStack> getItems() {
@@ -139,7 +140,7 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
     @Override
     public boolean isValid(int slot, ItemStack stack) {
         if (slot == 0) {
-            return stack.getItem() instanceof BlockItem && !((BlockItem)stack.getItem()).getBlock().hasBlockEntity();
+            return stack.getItem() instanceof BlockItem && !(((BlockItem) stack.getItem()).getBlock() instanceof BlockWithEntity);
         } else {
             ItemStack itemStack = this.items.get(1);
             return canUseAsFuel(stack) || stack.getItem() == Items.BUCKET && itemStack.getItem() != Items.BUCKET;
@@ -147,9 +148,9 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
-        Inventories.fromTag(tag, items);
+    public void readNbt(NbtCompound tag) {
+        super.readNbt(tag);
+        Inventories.readNbt(tag, items);
         if (tag.contains("CustomName", 8)) {
             this.customName = Text.Serializer.fromJson(tag.getString("CustomName"));
         }
@@ -163,38 +164,38 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        Inventories.toTag(tag, items);
+    public NbtCompound writeNbt(NbtCompound tag) {
+        Inventories.writeNbt(tag, items);
         if (this.customName != null) {
             tag.putString("CustomName", Text.Serializer.toJson(this.customName));
         }
         tag.putShort("ProcessingTime", (short) this.processingTime);
         tag.putShort("FuelTime", (short) this.fuelTime);
         tag.putShort("MaxFuelTime", (short) this.maxFuelTime);
-        tag.putShort("Speed", (short)this.speed);
-        return super.toTag(tag);
+        tag.putShort("Speed", (short) this.speed);
+        return super.writeNbt(tag);
     }
 
-    public void tick() {
+    public static void tick(World world, BlockPos blockPos, BlockState blockState, PlacerBlockEntity t) {
         if (world.isClient) {
             return;
         }
 
-        if (this.isBurning()) {
-            this.fuelTime--;
+        if (t.isBurning()) {
+            t.fuelTime--;
         }
 
-        if (items.get(0).isEmpty()) {
-            this.processingTime = 0;
+        if (t.items.get(0).isEmpty()) {
+            t.processingTime = 0;
             return;
         }
 
         // Freeze when powered
-        if (world.getBlockState(getPos()).get(Properties.POWERED).booleanValue()) {
-            this.processingTime = 0;
+        if (world.getBlockState(t.getPos()).get(Properties.POWERED).booleanValue()) {
+            t.processingTime = 0;
             return;
         }
-
+        BlockPos pos = t.pos;
         PlayerEntity player = world.getClosestPlayer((int) pos.getX(), (int) pos.getY(), (int) pos.getZ(), Float.MAX_VALUE, false);
         if (player == null) {
             return;
@@ -202,51 +203,51 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
 
         Direction direction = (Direction) world.getBlockState(pos).get(PlacerBlock.FACING);
         BlockPos position = new BlockPos(pos.getX() + direction.getOffsetX(), pos.getY() + direction.getOffsetY(), pos.getZ() + direction.getOffsetZ());
-        Block block = ((BlockItem) items.get(0).getItem()).getBlock();
+        Block block = ((BlockItem) t.items.get(0).getItem()).getBlock();
 
         if (!block.canPlaceAt(block.getDefaultState(), world, position)) {
-            this.processingTime = 0;
+            t.processingTime = 0;
             return;
         }
 
         if (!world.getBlockState(position).getMaterial().isReplaceable()) {
-            this.processingTime = 0;
+            t.processingTime = 0;
             return;
         }
 
         boolean changed = false;
-        if (this.isBurning()) {
-            this.processingTime++;
+        if (t.isBurning()) {
+            t.processingTime++;
         }
 
-        ItemStack itemStack = this.items.get(1);
+        ItemStack itemStack = t.items.get(1);
         // Burn another item
-        if (!this.isBurning()) {
+        if (!t.isBurning()) {
             if (!itemStack.isEmpty()) {
-                this.maxFuelTime = this.getFuelTime(itemStack);
-                this.fuelTime = this.maxFuelTime;
+                t.maxFuelTime = t.getFuelTime(itemStack);
+                t.fuelTime = t.maxFuelTime;
                 changed = true;
 
                 Item item = itemStack.getItem();
                 itemStack.decrement(1);
                 if (itemStack.isEmpty()) {
                     Item item2 = item.getRecipeRemainder();
-                    this.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
+                    t.items.set(1, item2 == null ? ItemStack.EMPTY : new ItemStack(item2));
                 }
             } else {
-                this.processingTime = 0;
+                t.processingTime = 0;
             }
         }
 
         // Generate items
-        if (this.processingTime == speed) {
-            this.processingTime = 0;
-            this.placeBlock(position, block);
+        if (t.processingTime == t.speed) {
+            t.processingTime = 0;
+            t.placeBlock(position, block);
             changed = true;
         }
 
         if (changed) {
-            this.markDirty();
+            t.markDirty();
         }
     }
 
@@ -272,10 +273,6 @@ public class PlacerBlockEntity extends MachineBlockEntity implements SidedInvent
             Item item = fuel.getItem();
             return (Integer) AbstractFurnaceBlockEntity.createFuelTimeMap().getOrDefault(item, 0);
         }
-    }
-
-    public static boolean canUseAsFuel(ItemStack stack) {
-        return AbstractFurnaceBlockEntity.createFuelTimeMap().containsKey(stack.getItem());
     }
 
     public int[] getAvailableSlots(Direction side) {
